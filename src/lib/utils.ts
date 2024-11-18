@@ -1,318 +1,470 @@
-import type { Key, KeyboardLayout } from "./types";
+import type { KeyPressMap } from "./types";
 
-const LAYOUT_60: KeyboardLayout = {
+const LAYOUT_60 = {
   rows: [
     [
       {
-        name: "tilde",
+        name: "Backquote",
         width: 1,
         legends: [{ display: "`" }],
+        finger: "L-5",
+        row: 1,
       },
       {
-        name: "1",
+        name: "Digit1",
         width: 1,
         legends: [{ display: "1" }],
+        finger: "L-5",
+        row: 1,
       },
       {
-        name: "2",
+        name: "Digit2",
         width: 1,
         legends: [{ display: "2" }],
+        finger: "L-4",
+        row: 1,
       },
       {
-        name: "3",
+        name: "Digit3",
         width: 1,
         legends: [{ display: "3" }],
+        finger: "L-3",
+        row: 1,
       },
       {
-        name: "4",
+        name: "Digit4",
         width: 1,
         legends: [{ display: "4" }],
+        finger: "L-2",
+        row: 1,
       },
       {
-        name: "5",
+        name: "Digit5",
         width: 1,
         legends: [{ display: "5" }],
+        finger: "L-2",
+        row: 1,
       },
       {
-        name: "6",
+        name: "Digit6",
         width: 1,
         legends: [{ display: "6" }],
+        finger: "R-2",
+        row: 1,
       },
       {
-        name: "7",
+        name: "Digit7",
         width: 1,
         legends: [{ display: "7" }],
+        finger: "R-2",
+        row: 1,
       },
       {
-        name: "8",
+        name: "Digit8",
         width: 1,
         legends: [{ display: "8" }],
+        finger: "R-3",
+        row: 1,
       },
       {
-        name: "9",
+        name: "Digit9",
         width: 1,
         legends: [{ display: "9" }],
+        finger: "R-4",
+        row: 1,
       },
       {
-        name: "0",
+        name: "Digit0",
         width: 1,
         legends: [{ display: "0" }],
+        finger: "R-5",
+        row: 1,
       },
       {
-        name: "-",
+        name: "Minus",
         width: 1,
         legends: [{ display: "-" }],
+        finger: "R-5",
+        row: 1,
       },
       {
-        name: "=",
+        name: "Equal",
         width: 1,
         legends: [{ display: "=" }],
+        finger: "R-5",
+        row: 1,
       },
       {
-        name: "backspace",
+        name: "Backspace",
         width: 2,
         legends: [{ display: "Backspace" }],
+        finger: "R-5",
+        row: 1,
       },
     ],
     [
       {
-        name: "tab",
+        name: "Tab",
         width: 1.5,
         legends: [{ display: "Tab" }],
+        finger: "L-5",
+        row: 2,
       },
       {
-        name: "q",
+        name: "KeyQ",
         width: 1,
         legends: [{ display: "Q" }],
+        finger: "L-5",
+        row: 2,
       },
       {
-        name: "w",
+        name: "KeyW",
         width: 1,
         legends: [{ display: "W" }],
+        finger: "L-4",
+        row: 2,
       },
       {
-        name: "e",
+        name: "KeyE",
         width: 1,
         legends: [{ display: "E" }],
+        finger: "L-3",
+        row: 2,
       },
       {
-        name: "r",
+        name: "KeyR",
         width: 1,
         legends: [{ display: "R" }],
+        finger: "L-2",
+        row: 2,
       },
       {
-        name: "t",
+        name: "KeyT",
         width: 1,
         legends: [{ display: "T" }],
+        finger: "L-2",
+        row: 2,
       },
       {
-        name: "y",
+        name: "KeyY",
         width: 1,
         legends: [{ display: "Y" }],
+        finger: "R-2",
+        row: 2,
       },
       {
-        name: "u",
+        name: "KeyU",
         width: 1,
         legends: [{ display: "U" }],
+        finger: "R-2",
+        row: 2,
       },
       {
-        name: "i",
+        name: "KeyI",
         width: 1,
         legends: [{ display: "I" }],
+        finger: "R-3",
+        row: 2,
       },
       {
-        name: "o",
+        name: "KeyO",
         width: 1,
         legends: [{ display: "O" }],
+        finger: "R-4",
+        row: 2,
       },
       {
-        name: "p",
+        name: "KeyP",
         width: 1,
         legends: [{ display: "P" }],
+        finger: "R-5",
+        row: 2,
       },
       {
-        name: "[",
+        name: "BracketLeft",
         width: 1,
         legends: [{ display: "[" }],
+        finger: "R-5",
+        row: 2,
       },
       {
-        name: "]",
+        name: "BracketRight",
         width: 1,
         legends: [{ display: "]" }],
+        finger: "R-5",
+        row: 2,
       },
       {
-        name: "\\",
+        name: "Backslash",
         width: 1.5,
         legends: [{ display: "\\" }],
+        finger: "R-5",
+        row: 2,
       },
     ],
     [
       {
-        name: "cap-lock",
+        name: "CapsLock",
         width: 1.75,
         legends: [{ display: "Caps" }],
+        finger: "L-5",
+        row: 3,
       },
       {
-        name: "a",
+        name: "KeyA",
         width: 1,
         legends: [{ display: "A" }],
+        finger: "L-5",
+        row: 3,
       },
       {
-        name: "s",
+        name: "KeyS",
         width: 1,
         legends: [{ display: "S" }],
+        finger: "L-4",
+        row: 3,
       },
       {
-        name: "d",
+        name: "KeyD",
         width: 1,
         legends: [{ display: "D" }],
+        finger: "L-3",
+        row: 3,
       },
       {
-        name: "f",
+        name: "KeyF",
         width: 1,
         legends: [{ display: "F" }],
+        finger: "L-2",
+        row: 3,
       },
       {
-        name: "g",
+        name: "KeyG",
         width: 1,
         legends: [{ display: "G" }],
+        finger: "L-2",
+        row: 3,
       },
       {
-        name: "h",
+        name: "KeyH",
         width: 1,
         legends: [{ display: "H" }],
+        finger: "R-2",
+        row: 3,
       },
       {
-        name: "j",
+        name: "KeyJ",
         width: 1,
         legends: [{ display: "J" }],
+        finger: "R-2",
+        row: 3,
       },
       {
-        name: "k",
+        name: "KeyK",
         width: 1,
         legends: [{ display: "K" }],
+        finger: "R-3",
+        row: 3,
       },
       {
-        name: "l",
+        name: "KeyL",
         width: 1,
         legends: [{ display: "L" }],
+        finger: "R-4",
+        row: 3,
       },
       {
-        name: ";",
+        name: "Semicolon",
         width: 1,
         legends: [{ display: ";" }],
+        finger: "R-5",
+        row: 3,
       },
       {
-        name: "'",
+        name: "Quote",
         width: 1,
         legends: [{ display: "'" }],
+        finger: "R-5",
+        row: 3,
       },
       {
-        name: "enter",
+        name: "Enter",
         width: 2.25,
         legends: [{ display: "Enter" }],
+        finger: "R-5",
+        row: 3,
       },
     ],
     [
       {
-        name: "l-shift",
+        name: "ShiftLeft",
         width: 2.25,
         legends: [{ display: "Shift" }],
+        finger: "L-5",
+        row: 4,
       },
       {
-        name: "z",
+        name: "KeyZ",
         width: 1,
         legends: [{ display: "Z" }],
+        finger: "L-5",
+        row: 4,
       },
       {
-        name: "x",
+        name: "KeyX",
         width: 1,
         legends: [{ display: "X" }],
+        finger: "L-4",
+        row: 4,
       },
       {
-        name: "c",
+        name: "KeyC",
         width: 1,
         legends: [{ display: "C" }],
+        finger: "L-3",
+        row: 4,
       },
       {
-        name: "v",
+        name: "KeyV",
         width: 1,
         legends: [{ display: "V" }],
+        finger: "L-2",
+        row: 4,
       },
       {
-        name: "b",
+        name: "KeyB",
         width: 1,
         legends: [{ display: "B" }],
+        finger: "L-2",
+        row: 4,
       },
       {
-        name: "n",
+        name: "KeyN",
         width: 1,
         legends: [{ display: "N" }],
+        finger: "R-2",
+        row: 4,
       },
       {
-        name: "m",
+        name: "KeyM",
         width: 1,
         legends: [{ display: "M" }],
+        finger: "R-2",
+        row: 4,
       },
       {
-        name: ",",
+        name: "Comma",
         width: 1,
         legends: [{ display: "," }],
+        finger: "R-3",
+        row: 4,
       },
       {
-        name: ".",
+        name: "Period",
         width: 1,
         legends: [{ display: "." }],
+        finger: "R-4",
+        row: 4,
       },
       {
-        name: "/",
+        name: "Slash",
         width: 1,
         legends: [{ display: "/" }],
+        finger: "R-5",
+        row: 4,
       },
       {
-        name: "r-shift",
+        name: "ShiftRight",
         width: 2.75,
         legends: [{ display: "Shift" }],
+        finger: "R-5",
+        row: 4,
       },
     ],
     [
       {
-        name: "l-ctrl",
+        name: "ControlLeft",
         width: 1.5,
         legends: [{ display: "Ctrl" }],
+        finger: "L-5",
+        row: 5,
       },
       {
-        name: "l-meta",
+        name: "MetaLeft",
         width: 1.5,
         legends: [{ display: "Meta" }],
+        finger: "L-1",
+        row: 5,
       },
       {
-        name: "l-alt",
+        name: "AltLeft",
         width: 1.5,
         legends: [{ display: "Alt" }],
+        finger: "L-1",
+        row: 5,
       },
       {
-        name: "space",
+        name: "Space",
         width: 6,
         legends: [],
+        finger: "R-1",
+        row: 5,
       },
       {
-        name: "r-alt",
+        name: "AltRight",
         width: 1.5,
         legends: [{ display: "Alt" }],
+        finger: "R-1",
+        row: 5,
       },
       {
-        name: "r-meta",
+        name: "MetaRight",
         width: 1.5,
         legends: [{ display: "Meta" }],
+        finger: "R-1",
+        row: 5,
       },
       {
-        name: "r-ctrl",
+        name: "ControlRight",
         width: 1.5,
         legends: [{ display: "Ctrl" }],
+        finger: "R-5",
+        row: 5,
       },
     ],
   ],
 };
 
-export { LAYOUT_60 };
+const Keys = LAYOUT_60.rows.flat();
+
+const getDurationByFinger = (keyPresses: KeyPressMap, finger: string) => {
+  let count = 0,
+    cumulative = 0;
+  const keysByFinger = Keys.filter((key) => key.finger === finger);
+  for (const keyByFinger of keysByFinger) {
+    const pressedKey = keyPresses[keyByFinger.name];
+    if (!pressedKey) {
+      continue;
+    }
+    cumulative += pressedKey.cumulative;
+    count += 1;
+  }
+  return cumulative / count || 0;
+};
+
+const getDurationByRow = (keyPresses: KeyPressMap, row: number) => {
+  let count = 0,
+    cumulative = 0;
+  const keysByRow = Keys.filter((key) => key.row === row);
+  for (const keyByRow of keysByRow) {
+    const pressedKey = keyPresses[keyByRow.name];
+    if (!pressedKey) {
+      continue;
+    }
+    cumulative += pressedKey.cumulative;
+    count += 1;
+  }
+  return cumulative / count || 0;
+};
+
+export { LAYOUT_60, Keys, getDurationByFinger, getDurationByRow };

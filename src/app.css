@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --key-size: 3.5em;
+}
+
 body {
   margin: 0;
   display: flex;

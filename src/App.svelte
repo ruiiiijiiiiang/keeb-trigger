@@ -1,10 +1,12 @@
 <script lang="ts">
   import Keyboard from './lib/Keyboard.svelte';
+  import PerFingerStats from './lib/PerFingerStats.svelte';
+    import PerRowStats from './lib/PerRowStats.svelte';
 
   let keyPresses = $state({});
   function keyDownHandler(event: KeyboardEvent) {
     event.preventDefault();
-    const key = event.key;
+    const key = event.code;
     if (!keyPresses[key]) {
       keyPresses[key] = {
         totalDuration: 0,
@@ -16,7 +18,7 @@
 
   function keyUpHandler(event: KeyboardEvent) {
     event.preventDefault();
-    const key = event.key;
+    const key = event.code;
     if (!keyPresses[key] || !keyPresses[key].pressTime) {
       return;
     }
@@ -26,13 +28,11 @@
     totalDuration += duration;
     count += 1;
     keyPresses[key] = {
-      duration,
       pressTime: undefined,
       totalDuration,
       count,
+      cumulative: totalDuration / count,
     };
-    const current = duration, accumulative = totalDuration / count;
-    console.log({ key, current, accumulative });
   }
 </script>
 
@@ -42,5 +42,14 @@
 />
 
 <main>
-  <Keyboard keyPresses={keyPresses}/>
+  <div class="flex gap-14">
+    <div>
+      <Keyboard keyPresses={keyPresses} />
+      <br />
+      <PerFingerStats keyPresses={keyPresses} />
+    </div>
+    <div>
+      <PerRowStats keyPresses={keyPresses} />
+    </div>
+  </div>
 </main>

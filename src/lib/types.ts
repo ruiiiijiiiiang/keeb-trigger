@@ -28,9 +28,9 @@ type KeyboardLayout = {
 
 type KeyPress = {
   pressTime?: number;
-  duration?: number;
   totalDuration: number;
   count: number;
+  cumulative?: number;
 };
 
 type KeyPressMap = Record<string, KeyPress>;
