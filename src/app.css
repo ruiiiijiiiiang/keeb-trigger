@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --key-size: 3.5em;
+  --keycap-size: 3.5em;
 }
 
 body {

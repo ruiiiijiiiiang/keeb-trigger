@@ -1,6 +1,6 @@
 import type { KeyPressMap } from "./types";
 
-const LAYOUT_60 = {
+const Keyboard_Layout = {
   rows: [
     [
       {
@@ -435,14 +435,18 @@ const LAYOUT_60 = {
   ],
 };
 
-const Keys = LAYOUT_60.rows.flat();
+const Keys = Keyboard_Layout.rows.flat();
 
-const getDurationByFinger = (keyPresses: KeyPressMap, finger: string) => {
+const getAverageByGroup = (
+  keyPresses: KeyPressMap,
+  groupType: "finger" | "row",
+  group: string | number,
+) => {
   let count = 0,
     cumulative = 0;
-  const keysByFinger = Keys.filter((key) => key.finger === finger);
-  for (const keyByFinger of keysByFinger) {
-    const pressedKey = keyPresses[keyByFinger.name];
+  const keysByGroup = Keys.filter((key) => key[groupType] === group);
+  for (const keyByGroup of keysByGroup) {
+    const pressedKey = keyPresses[keyByGroup.name];
     if (!pressedKey) {
       continue;
     }
@@ -452,19 +456,4 @@ const getDurationByFinger = (keyPresses: KeyPressMap, finger: string) => {
   return cumulative / count || 0;
 };
 
-const getDurationByRow = (keyPresses: KeyPressMap, row: number) => {
-  let count = 0,
-    cumulative = 0;
-  const keysByRow = Keys.filter((key) => key.row === row);
-  for (const keyByRow of keysByRow) {
-    const pressedKey = keyPresses[keyByRow.name];
-    if (!pressedKey) {
-      continue;
-    }
-    cumulative += pressedKey.cumulative;
-    count += 1;
-  }
-  return cumulative / count || 0;
-};
-
-export { LAYOUT_60, Keys, getDurationByFinger, getDurationByRow };
+export { Keys, Keyboard_Layout, getAverageByGroup };

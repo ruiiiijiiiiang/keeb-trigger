@@ -1,19 +1,19 @@
 <script>
-  import { getDurationByRow } from "./utils";
+  import { getAverageByGroup } from "./utils";
   let { keyPresses } = $props();
 </script>
 
 <div class="variant-ringed-primary flex flex-col">
   {#each [1, 2, 3, 4, 5] as row}
     <div
-      class="variant-ghost-primary flex flex-col items-stretch"
-      style="width: var(--key-size); height: var(--key-size);"
+      class="variant-ghost-primary flex flex-col items-around"
+      style="width: var(--keycap-size); height: var(--keycap-size);"
     >
       <div>
         Row{` ${row}`}
       </div>
       <div>
-        {getDurationByRow(keyPresses, row).toFixed(2)}
+        {getAverageByGroup(keyPresses, "row", row).toFixed(2)}
       </div>
     </div>
   {/each}
