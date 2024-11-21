@@ -20,3 +20,16 @@ body {
   padding: 2rem;
   text-align: center;
 }
+
+@layer utilities {
+  .keycap {
+    @apply rounded 
+      border-solid
+      border-2
+      border-primary-500
+      outline
+      outline-1
+      outline-gray-300
+      outline-offset-[-1px];
+  }
+}

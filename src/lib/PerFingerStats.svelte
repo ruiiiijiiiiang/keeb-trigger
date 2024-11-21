@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { getAverageByGroup } from "./utils";
   const fingersMap = {
     1: "thumb",
@@ -10,11 +10,11 @@
   let { keyPresses } = $props();
 </script>
 
-<div class="variant-ringed-primary flex justify-center gap-10">
-  <div class="flex justify-center gap-4">
+<div class="flex justify-center gap-10">
+  <div class="card variant-ghost-primary flex justify-center gap-4">
     {#each [5, 4, 3, 2, 1] as finger}
       <div
-        class="variant-ghost-primary flex flex-col items-around"
+        class="variant-filled-primary flex flex-col items-around rounded"
         style="width: var(--keycap-size); height: var(--keycap-size);"
       >
         <div>
@@ -26,10 +26,10 @@
       </div>
     {/each}
   </div>
-  <div class="flex justify-center gap-4">
+  <div class="card variant-ghost-primary flex justify-center gap-4">
     {#each [1, 2, 3, 4, 5] as finger}
       <div
-        class="variant-ghost-primary flex flex-col items-around"
+        class="variant-filled-primary flex flex-col items-around rounded"
         style="width: var(--keycap-size); height: var(--keycap-size);"
       >
         <div>
