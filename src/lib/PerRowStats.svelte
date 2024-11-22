@@ -1,20 +1,16 @@
 <script lang="ts">
+  import type { KeyPressMap } from "./types";
   import { getAverageByGroup } from "./utils";
-  let { keyPresses } = $props();
+  import KeyCap from "./KeyCap.svelte";
+  const { keyPresses }: { keyPresses: KeyPressMap } = $props();
+  const rows = [1, 2, 3, 4, 5];
 </script>
 
-<div class="variant-ringed-primary flex flex-col gap-1">
-  {#each [1, 2, 3, 4, 5] as row}
-    <div
-      class="variant-filled-primary flex flex-col items-around rounded"
-      style="width: var(--keycap-size); height: var(--keycap-size);"
-    >
-      <div>
-        Row{` ${row}`}
-      </div>
-      <div>
-        {getAverageByGroup(keyPresses, "row", row).toFixed(2)}
-      </div>
-    </div>
+<div class="variant-ringed-primary flex flex-col">
+  {#each rows as row}
+    <KeyCap
+      topText={`Row ${row}`}
+      bottomText={getAverageByGroup(keyPresses, "row", row).toFixed(2)}
+    />
   {/each}
 </div>

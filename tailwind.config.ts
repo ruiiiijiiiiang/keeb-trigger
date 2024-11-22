@@ -18,15 +18,16 @@ const config = {
     ),
   ],
   theme: {
-    extend: {
-      spacing: {},
-    },
+    extend: {},
   },
   plugins: [
     // Append the Skeleton plugin (after other plugins)
     skeleton({
       themes: {
-        preset: [{ name: "seafoam", enhancements: true }, "vintage", "rocket"],
+        preset: [
+          { name: "seafoam", enhancements: true },
+          { name: "vintage", enhancements: true },
+        ],
       },
     }),
   ],

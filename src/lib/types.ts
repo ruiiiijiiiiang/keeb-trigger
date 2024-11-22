@@ -1,25 +1,11 @@
-type KeyType = "character" | "mod";
-
-type LegendLocation =
-  | "center"
-  | "left"
-  | "right"
-  | "top"
-  | "bottom"
-  | "top-left"
-  | "top-right"
-  | "bottom-left"
-  | "bottom-right";
-
-type KeyLegend = {
-  display: string;
-  location?: LegendLocation;
-};
+type KeyType = "letter" | "digit" | "mod";
 
 type Key = {
   name: string;
   width: number;
-  legends?: KeyLegend[];
+  legend?: string;
+  fingers: string[];
+  keyType: KeyType;
 };
 
 type KeyboardLayout = {
@@ -27,12 +13,28 @@ type KeyboardLayout = {
 };
 
 type KeyPress = {
-  pressTime?: number;
-  totalDuration: number;
   count: number;
+  totalDuration: number;
+  pressed: boolean;
+  pressTime?: number;
   cumulative?: number;
 };
 
 type KeyPressMap = Record<string, KeyPress>;
 
-export type { KeyType, Key, KeyboardLayout, KeyPress, KeyPressMap };
+type KeyCapProps = {
+  width?: number;
+  topText?: string;
+  bottomText?: string;
+  color?: "primary" | "secondary" | "tertiary";
+  pressed?: boolean;
+};
+
+export type {
+  KeyType,
+  Key,
+  KeyboardLayout,
+  KeyPress,
+  KeyPressMap,
+  KeyCapProps,
+};

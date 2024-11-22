@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --keycap-size: 3.5em;
+  --keycap-size: 4em;
 }
 
 body {
@@ -15,21 +15,7 @@ body {
 }
 
 #app {
-  /*max-width: 1280px;*/
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
-}
-
-@layer utilities {
-  .keycap {
-    @apply rounded 
-      border-solid
-      border-2
-      border-primary-500
-      outline
-      outline-1
-      outline-gray-300
-      outline-offset-[-1px];
-  }
 }

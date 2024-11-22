@@ -1,6 +1,7 @@
 {
   "version": "4",
   "specifiers": {
+    "jsr:@nick/clsx@~0.3.1": "0.3.1",
     "npm:@deno/vite-plugin@1": "1.0.0_vite@5.4.11__@types+node@22.9.0_@types+node@22.9.0",
     "npm:@skeletonlabs/skeleton@^2.10.3": "2.10.3_svelte@5.2.3__acorn@8.14.0",
     "npm:@skeletonlabs/tw-plugin@0.4": "0.4.0_tailwindcss@3.4.14__postcss@8.4.49",
@@ -12,6 +13,11 @@
     "npm:tailwindcss@^3.4.14": "3.4.14_postcss@8.4.49",
     "npm:vite@*": "5.4.11_@types+node@22.9.0",
     "npm:vite@^5.4.9": "5.4.11_@types+node@22.9.0"
+  },
+  "jsr": {
+    "@nick/clsx@0.3.1": {
+      "integrity": "6c7bfc9217a7e5fbf7b0c283fab25336e428f74baf9c011e5c46aa8121eb6713"
+    }
   },
   "npm": {
     "@alloc/quick-lru@5.2.0": {
