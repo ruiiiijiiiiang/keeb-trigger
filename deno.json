@@ -19,6 +19,5 @@
     "postcss": "npm:postcss@^8.4.49",
     "svelte": "npm:svelte@^5.0.3",
     "tailwindcss": "npm:tailwindcss@^3.4.14",
-    "vite": "npm:vite@^5.4.9"
   }
 }

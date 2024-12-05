@@ -30,6 +30,8 @@ type KeyCapProps = {
   pressed?: boolean;
 };
 
+type CharacterStatus = "correct" | "incorrect" | "default";
+
 export type {
   KeyType,
   Key,
@@ -37,4 +39,5 @@ export type {
   KeyPress,
   KeyPressMap,
   KeyCapProps,
+  CharacterStatus,
 };

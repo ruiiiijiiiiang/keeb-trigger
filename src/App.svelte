@@ -1,10 +1,16 @@
 <script lang="ts">
+  import { generate } from "npm:random-words";
   import type { KeyPressMap } from "./lib/types";
-  import Keyboard from './lib/Keyboard.svelte';
-  import PerFingerStats from './lib/PerFingerStats.svelte';
-  import PerRowStats from './lib/PerRowStats.svelte';
+  import Keyboard from "./lib/Keyboard.svelte";
+  import PerFingerStats from "./lib/PerFingerStats.svelte";
+  import PerRowStats from "./lib/PerRowStats.svelte";
+  import TypingArea from "./lib/TypingArea.svelte";
 
   let keyPresses: KeyPressMap = $state({});
+  const length = 50;
+  const words = generate(length);
+  let inputText = $state("");
+
   function keyDownHandler(event: KeyboardEvent) {
     event.preventDefault();
     const key = event.code;
@@ -37,6 +43,14 @@
       cumulative: totalDuration / count,
       pressed: false,
     };
+
+    if (event.key === 'Backspace') {
+      inputText = inputText.slice(0, -1);
+      return;
+    }
+    if (event.key.length === 1) {
+      inputText += event.key;
+    }
   }
 </script>
 
@@ -45,8 +59,9 @@
   onkeydown = {keyDownHandler}
 />
 
-<main>
-  <div class="flex gap-14">
+<main class="flex flex-col gap-14 max-w-screen-xl">
+  <TypingArea words={words} inputText={inputText} />
+  <div class="flex gap-14 mx-auto">
     <div>
       <Keyboard keyPresses={keyPresses} />
       <br />

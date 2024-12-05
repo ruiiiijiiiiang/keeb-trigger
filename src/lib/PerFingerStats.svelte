@@ -11,7 +11,7 @@
   };
   const leftFingers = Object.keys(fingersMap).reverse();
   const rightFingers = Object.keys(fingersMap);
-  const hands = ['L', 'R'];
+  const hands = ["L", "R"];
   const { keyPresses }: { keyPresses: KeyPressMap } = $props();
 </script>
 
