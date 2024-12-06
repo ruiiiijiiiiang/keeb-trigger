@@ -16,16 +16,17 @@
   const characterStatus: CharacterStatus[] = $derived.by(() => {
     const status: boolean[] = [];
     words.forEach((word, wordIndex) => {
-      // Checking for words that have not been typed
+      // Check for words that have not been typed
       if (wordIndex >= inputWords.length) {
         word.split("").forEach(() => {
           status.push("default")
         });
       } else {
+        // Check for words that have been typed
         const inputWord = inputWords[wordIndex];
         word.split("").forEach((char, charIndex) => {
           if (charIndex >= inputWord.length) {
-            // Check if the current word is the last word
+            // Check if the current word is the last typed word
             status.push(wordIndex === inputWords.length - 1 ? "default" : "incorrect");
           } else {
             status.push(inputWord[charIndex] === char ? "correct" : "incorrect");
@@ -51,35 +52,23 @@
 >
   <h2 class="text-2xl font-bold mb-4 text-center">Keeb Trigger</h2>
   <div
-    class="text-lg leading-relaxed p-2 border rounded mb-4 min-h-[100px] focus:outline-none cursor-text"
+    class="font-mono text-lg leading-relaxed p-2 border rounded mb-4 min-h-[100px] focus:outline-none cursor-text"
   >
     {#each text.split("") as char, index}
-      {#if index !== cursorPosition}
-        <span
-          class={`
-            ${characterStatus[index] === "correct" 
-              ? "text-success-500"
-              : characterStatus[index] === "incorrect" 
-                ? "text-error-500"
-                : ""
-            }
-          `}
-        >
-          {char}
-        </span>
-      {:else}
-        <span
-          class={`
-            ${characterStatus[index] === "correct" 
-              ? "text-success-500"
-              : characterStatus[index] === "incorrect" 
-                ? "text-error-500"
-                : ""
-            }
-          `}
-        >
-          {`${char}|`}
-        </span>
+      <span
+        class={`
+          ${characterStatus[index] === "correct"
+            ? "text-success-500"
+            : characterStatus[index] === "incorrect"
+              ? "text-error-500"
+              : ""
+          }
+        `}
+      >
+        {char}
+      </span>
+      {#if index === cursorPosition}
+        {`|`}
       {/if}
     {/each}
   </div>
@@ -101,14 +90,3 @@
     </div>
   </div>
 </div>
-
-<style>
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
-.animate-blink {
-  animation: blink 1s infinite;
-}
-</style>

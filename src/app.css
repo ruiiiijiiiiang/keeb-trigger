@@ -2,6 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  @font-face {
+    font-family: "SpaceMono";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: local("SpaceMono-Regular"),
+      url("$fonts/SpaceMono-Regular.ttf") format("ttf");
+  }
+  @font-face {
+    font-family: "SpaceMono";
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: local("SpaceMono-Italic"),
+      url("$fonts/SpaceMono-Italic.ttf") format("ttf");
+  }
+  @font-face {
+    font-family: "SpaceMono";
+    font-style: bold;
+    font-weight: 700;
+    font-display: swap;
+    src: local("SpaceMono-Bold"),
+      url("$fonts/SpaceMono-Bold.ttf") format("ttf");
+  }
+}
+
 :root {
   --keycap-size: 4em;
 }
