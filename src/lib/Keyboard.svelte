@@ -12,8 +12,8 @@
           width={key.width}
           topText={key.legend}
           bottomText={
-              keyPresses[key.name]?.cumulative
-                ? keyPresses[key.name].cumulative.toFixed(2)
+              keyPresses[key.name]?.count > 0
+                ? (keyPresses[key.name].totalDuration / keyPresses[key.name].count).toFixed(2)
                 : (0).toFixed(2)
               }
           color={

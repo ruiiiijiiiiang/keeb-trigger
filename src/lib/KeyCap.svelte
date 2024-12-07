@@ -1,6 +1,8 @@
 <script lang="ts">
   import { clsx } from "@nick/clsx";
+  import { popup } from "@skeletonlabs/skeleton";
   import type { KeyCapProps } from "./types";
+			
   const {
     width = 1,
     topText = "",
@@ -30,12 +32,18 @@
     outline
     outline-1
     outline-gray-500
-    outline-offset-[-2px]`,
+    outline-offset-[-2px]
+    [&>*]:pointer-events-none`,
     { "scale-95 translate-y-0.5 transition-transform duration-[25ms]": pressed },
   )}
   style="width: calc(var(--keycap-size)*{width});
     height: var(--keycap-size);
     background: rgba(var(--color-{color}-800) / 1);"
+  use:popup={{
+    event: "hover",
+    target: `statPopup-${topText}`,
+    placement: "top"
+  }}
 >
   <div
     class={clsx(`absolute
@@ -58,5 +66,9 @@
     <div>
       {@render keyCapText(bottomText)}
     </div>
+  </div>
+  <div class="card p-4 variant-filled-secondary" data-popup="statPopup-{topText}">
+    <p>Hover Content</p>
+    <div class="arrow variant-filled-secondary"></div>
   </div>
 </div>

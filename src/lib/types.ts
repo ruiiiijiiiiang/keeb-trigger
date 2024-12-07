@@ -5,6 +5,7 @@ type Key = {
   width: number;
   legend?: string;
   fingers: string[];
+  row: number;
   keyType: KeyType;
 };
 
@@ -14,20 +15,22 @@ type KeyboardLayout = {
 
 type KeyPress = {
   count: number;
-  totalDuration: number;
   pressed: boolean;
-  pressTime?: number;
-  cumulative?: number;
+  pressTime: Date;
+  totalDuration: number;
+  totalDelay: number;
+  correctPressCount: number;
+  incorrectPressCount: number;
 };
 
 type KeyPressMap = Record<string, KeyPress>;
 
 type KeyCapProps = {
-  width?: number;
-  topText?: string;
-  bottomText?: string;
-  color?: "primary" | "secondary" | "tertiary";
-  pressed?: boolean;
+  width: number;
+  topText: string;
+  bottomText: string;
+  color: "primary" | "secondary" | "tertiary";
+  pressed: boolean;
 };
 
 type CharacterStatus = "correct" | "incorrect" | "skipped" | "default";

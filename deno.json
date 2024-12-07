@@ -10,6 +10,7 @@
   },
   "imports": {
     "@deno/vite-plugin": "npm:@deno/vite-plugin@^1.0.0",
+    "@floating-ui/dom": "npm:@floating-ui/dom@^1.6.12",
     "@nick/clsx": "jsr:@nick/clsx@^0.3.1",
     "@skeletonlabs/skeleton": "npm:@skeletonlabs/skeleton@^2.10.3",
     "@skeletonlabs/tw-plugin": "npm:@skeletonlabs/tw-plugin@^0.4.0",
@@ -17,6 +18,7 @@
     "@types/node": "npm:@types/node@^22.9.0",
     "autoprefixer": "npm:autoprefixer@^10.4.20",
     "postcss": "npm:postcss@^8.4.49",
+    "random-words": "npm:random-words@^2.0.1",
     "svelte": "npm:svelte@^5.0.3",
     "tailwindcss": "npm:tailwindcss@^3.4.14",
   }

@@ -1,6 +1,6 @@
-import type { KeyPressMap } from "./types";
+import type { Key, KeyboardLayout, KeyPressMap } from "./types";
 
-const Keyboard_Layout = {
+const Keyboard_Layout: KeyboardLayout = {
   rows: [
     [
       {
@@ -506,10 +506,14 @@ const getAverageByGroup = (
   let keysByGroup;
   switch (groupType) {
     case "finger":
-      keysByGroup = Keys.filter((key) => key.fingers.includes(group as string));
+      keysByGroup = Keys.filter(
+        (key: Key) => key.fingers.includes(group as string)
+      );
       break;
     case "row":
-      keysByGroup = Keys.filter((key) => key.row === group);
+      keysByGroup = Keys.filter(
+        (key: Key) => key.row === group
+      );
       break;
   }
   for (const keyByGroup of keysByGroup) {
