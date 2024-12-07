@@ -1,8 +1,8 @@
 import { createRequire } from "node:module";
-const require = createRequire(import.meta.url);
-
-import * as path from "node:path";
+import { join } from "node:path";
 import type { Config } from "npm:tailwindcss";
+
+const require = createRequire(import.meta.url);
 
 import { skeleton } from "@skeletonlabs/tw-plugin";
 
@@ -12,7 +12,7 @@ const config = {
   content: [
     "index.html",
     "./src/**/*.{html,js,svelte,ts}",
-    path.join(
+    join(
       require.resolve("@skeletonlabs/skeleton"),
       "../**/*.{html,js,svelte,ts}",
     ),
@@ -25,11 +25,11 @@ const config = {
       keyframes: {
         blink: {
           "0%, 100%": { opacity: 1 },
-          "50%": { opacity: 0 }
+          "50%": { opacity: 0.2 }
         },
       },
       animation: {
-        blink: "blink 0.7s step-end infinite"
+        cursor: "blink 0.6s ease infinite"
       },
     },
   },
@@ -38,8 +38,13 @@ const config = {
     skeleton({
       themes: {
         preset: [
+          { name: "skeleton", enhancements: true },
+          { name: "wintry", enhancements: true },
+          { name: "modern", enhancements: true },
+          { name: "rocket", enhancements: true },
           { name: "seafoam", enhancements: true },
           { name: "vintage", enhancements: true },
+          { name: "hamlindigo", enhancements: true },
         ],
       },
     }),

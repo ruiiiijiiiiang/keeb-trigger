@@ -6,37 +6,47 @@
   import PerRowStats from "./lib/PerRowStats.svelte";
   import TypingArea from "./lib/TypingArea.svelte";
 
+  const SAMPLE_WORD_LENGTH: number = 50;
+
   let keyPresses: KeyPressMap = $state({});
-  const length = 50;
-  const words = generate(length);
-  let inputText = $state("");
+  let inputText: string = $state("");
+  let startTime: Date = $state(null);
+
+  const sampleWords: string[] = generate(SAMPLE_WORD_LENGTH);
+  const typedWords: string[] = $derived(inputText.split(" "));
 
   function keyDownHandler(event: KeyboardEvent) {
-    event.preventDefault();
-    const key = event.code;
-    if (!keyPresses[key]) {
-      keyPresses[key] = {
+    // event.preventDefault();
+    if (!startTime) {
+      startTime = Date.now();
+    }
+    const keyCode = event.code;
+    if (!keyPresses[keyCode]) {
+      keyPresses[keyCode] = {
         totalDuration: 0,
         count: 0,
         pressed: false,
       };
     }
-    keyPresses[key].pressed = true;
-    keyPresses[key].pressTime = Date.now();
+    keyPresses[keyCode].pressed = true;
+    keyPresses[keyCode].pressTime = Date.now();
   }
 
   function keyUpHandler(event: KeyboardEvent) {
-    event.preventDefault();
-    const key = event.code;
-    if (!keyPresses[key] || !keyPresses[key].pressTime) {
+    const keyCode = event.code;
+    // TODO: handle space
+    if (keyCode === "Space") {
+      event.preventDefault();
+    }
+    if (!keyPresses[keyCode] || !keyPresses[keyCode].pressTime) {
       return;
     }
     const releaseTime = Date.now();
-    let { totalDuration, pressTime, count } = keyPresses[key];
+    let { totalDuration, pressTime, count } = keyPresses[keyCode];
     const duration = releaseTime - pressTime;
     totalDuration += duration;
     count += 1;
-    keyPresses[key] = {
+    keyPresses[keyCode] = {
       pressTime: undefined,
       totalDuration,
       count,
@@ -44,11 +54,10 @@
       pressed: false,
     };
 
-    if (event.key === 'Backspace') {
+    if (keyCode === "Backspace") {
       inputText = inputText.slice(0, -1);
-      return;
     }
-    if (event.key.length === 1) {
+    if (event.key.length === 1 && typedWords.length < sampleWords.length) {
       inputText += event.key;
     }
   }
@@ -60,7 +69,7 @@
 />
 
 <main class="flex flex-col gap-14 max-w-screen-xl">
-  <TypingArea words={words} inputText={inputText} />
+  <TypingArea sampleWords={sampleWords} typedWords={typedWords} startTime={startTime} />
   <div class="flex gap-14 mx-auto">
     <div>
       <Keyboard keyPresses={keyPresses} />

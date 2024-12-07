@@ -10,6 +10,14 @@
   }: KeyCapProps = $props();
 </script>
 
+{#snippet keyCapText(text)}
+  {#if text}
+    {text}
+  {:else}
+    &nbsp;
+  {/if}
+{/snippet}
+
 <div
   class={clsx(`relative
     flex
@@ -21,11 +29,9 @@
     border-surface-600
     outline
     outline-1
-    outline-gray-300
-    outline-offset-[-2px]
-    transition-transform
-    duration-0`,
-    { "scale-95 translate-y-0.5": pressed },
+    outline-gray-500
+    outline-offset-[-2px]`,
+    { "scale-95 translate-y-0.5 transition-transform duration-[25ms]": pressed },
   )}
   style="width: calc(var(--keycap-size)*{width});
     height: var(--keycap-size);
@@ -39,26 +45,18 @@
       -translate-x-1/2
       border
       rounded
-      text-surface-700`,
-      { "translate-y-0.5": pressed },
+      text-surface-800`,
+      { "scale-95 translate-y-0.5": pressed },
     )}
     style="width: calc(100% - 5px);
       height: calc(100% - 8px);
       background: rgba(var(--color-{color}-300) / 1);"
   >
     <div class="font-bold">
-      {#if topText}
-        {topText}
-      {:else}
-        &nbsp;
-      {/if}
+      {@render keyCapText(topText)}
     </div>
     <div>
-      {#if bottomText}
-        {bottomText}
-      {:else}
-        &nbsp;
-      {/if}
+      {@render keyCapText(bottomText)}
     </div>
   </div>
 </div>

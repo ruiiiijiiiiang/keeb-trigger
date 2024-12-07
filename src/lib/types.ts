@@ -30,7 +30,7 @@ type KeyCapProps = {
   pressed?: boolean;
 };
 
-type CharacterStatus = "correct" | "incorrect" | "default";
+type CharacterStatus = "correct" | "incorrect" | "skipped" | "default";
 
 export type {
   KeyType,
