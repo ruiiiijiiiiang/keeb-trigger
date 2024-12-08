@@ -36,7 +36,10 @@
   const keyDownHandler = (event: KeyboardEvent) => {
     firstPressTime ??= Date.now();
 
-    const code = event.code;
+    const { code } = event;
+    if (keyPresses[code].pressed) {
+      return;
+    }
     keyPresses[code] = {
       ...keyPresses[code],
       pressed: true,
@@ -60,7 +63,9 @@
     const nextLetter = sampleWords.join(" ").charAt(cursorPosition);
     if (nextLetter === key) {
       correctPressCount += 1;
-      totalDelay += (releaseTime - lastPressTime);
+      if (lastPressTime) {
+        totalDelay += (releaseTime - lastPressTime);
+      }
     } else {
       //TODO: find a more elegant way to handle this
       keyPresses[`Key${nextLetter.toUpperCase()}`] = {
@@ -89,16 +94,19 @@
 
     lastPressTime = releaseTime;
   };
-  $inspect(keyPresses);
+  // $inspect(keyPresses['KeyJ']);
 
   const cursorPosition: number = $derived.by(() => {
     // Special case for the first word
     if (typedWords.length === 1) {
       return typedWords[0].length;
     }
-    const wordsTyped: string[] = sampleWords.slice(0, typedWords.length - 1 - sampleWords.length);
-    const lastTypedWord: string = typedWords[typedWords.length - 1];
-    return wordsTyped.join(" ").length + lastTypedWord.length + 1;
+    const numWordsFinished = typedWords.length - 1;
+    const wordsTyped: string[] = sampleWords.slice(0, numWordsFinished - sampleWords.length);
+    const lastTypedWord: string = typedWords.at(-1);
+    return wordsTyped.join(" ").length
+      + Math.min(sampleWords.at(numWordsFinished).length, lastTypedWord.length)
+      + 1;
   });
 
   const characterStatus: CharacterStatus[] = $derived.by(() => {

@@ -12,37 +12,38 @@
       url("$fonts/SpaceMono-Regular.ttf") format("ttf");
   }
   @font-face {
-    font-family: "SpaceMono";
-    font-style: italic;
+    font-family: "Electrolize";
+    font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: local("SpaceMono-Italic"),
-      url("$fonts/SpaceMono-Italic.ttf") format("ttf");
+    src: local("Electrolize-Regular"),
+      url("$fonts/Electrolize-Regular.ttf") format("ttf");
   }
   @font-face {
-    font-family: "SpaceMono";
-    font-style: bold;
-    font-weight: 700;
+    font-family: "SofiaSansCondensed";
+    font-style: normal;
+    font-weight: 400;
     font-display: swap;
-    src: local("SpaceMono-Bold"),
-      url("$fonts/SpaceMono-Bold.ttf") format("ttf");
+    src: local("SofiaSansCondensed-Regular"),
+      url("$fonts/SofiaSansCondensed-Regular.ttf") format("ttf");
+  }
+
+  body {
+    margin: 0;
+    display: flex;
+    place-items: center;
+    min-width: 320px;
+    min-height: 100vh;
+    font-family: "SofiaSansCondensed", sans-serif;
+  }
+
+  #app {
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
   }
 }
 
 :root {
   --keycap-size: 4em;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-#app {
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
 }

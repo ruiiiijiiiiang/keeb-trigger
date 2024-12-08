@@ -24,8 +24,8 @@ const config = {
     extend: {
       keyframes: {
         blink: {
-          "0%, 100%": { opacity: 1 },
-          "50%": { opacity: 0.2 }
+          "0%, 100%": { opacity: "1" },
+          "50%": { opacity: "0.3", filter: "blur(1px)" },
         },
       },
       animation: {

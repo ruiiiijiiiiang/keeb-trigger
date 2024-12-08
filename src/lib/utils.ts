@@ -501,8 +501,7 @@ const getAverageByGroup = (
   groupType: "finger" | "row",
   group: string | number,
 ) => {
-  let count = 0,
-    cumulative = 0;
+  let groupedCount = 0, groupedCumulative = 0;
   let keysByGroup;
   switch (groupType) {
     case "finger":
@@ -521,10 +520,11 @@ const getAverageByGroup = (
     if (!pressedKey) {
       continue;
     }
-    cumulative += pressedKey.cumulative;
-    count += 1;
+    const { totalDuration, count } = pressedKey;
+    groupedCumulative += (totalDuration / count);
+    groupedCount += 1;
   }
-  return cumulative / count || 0;
+  return groupedCumulative / groupedCount || 0;
 };
 
 export { Keys, Keyboard_Layout, getAverageByGroup };

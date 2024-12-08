@@ -67,8 +67,8 @@
       {@render keyCapText(bottomText)}
     </div>
   </div>
-  <div class="card p-4 variant-filled-secondary" data-popup="statPopup-{topText}">
+  <div class="card p-4 variant-glass-secondary" data-popup="statPopup-{topText}">
     <p>Hover Content</p>
-    <div class="arrow variant-filled-secondary"></div>
+    <div class="arrow variant-glass-secondary"></div>
   </div>
 </div>
