@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { setContext } from "svelte";
+  import { RadioGroup, RadioItem } from "@skeletonlabs/skeleton";
   import { generate } from "random-words";
-  import type { KeyPressMap } from "./lib/types";
+  import type { KeyPressMap, StatsMode } from "./lib/types";
   import { Keys } from "./lib/utils";
   import Keyboard from "./lib/Keyboard.svelte";
   import PerFingerStats from "./lib/PerFingerStats.svelte";
@@ -25,13 +27,20 @@
     return keyPresses;
   };
 
-  let keyPresses: KeyPressMap = $state(initialKeyPress());
-  let inputText: string = $state("");
-  let firstPressTime: Date = $state(null);
-  let lastPressTime: Date = $state(null);
+  let keyPresses: KeyPressMap = $state<KeyPressMap>(initialKeyPress());
+  setContext<KeyPressMap>("keyPresses", keyPresses);
+  let inputText: string = $state<string>("");
+  let firstPressTime: Date = $state<Date>(null);
+  let lastPressTime: Date = $state<Date>(null);
 
   const sampleWords: string[] = generate(SAMPLE_WORD_LENGTH);
-  const typedWords: string[] = $derived(inputText.split(" "));
+  setContext<string[]>("sampleWords", sampleWords);
+  const typedWords: string[] = $derived<string[]>(inputText.split(" "));
+  setContext<string[]>("typedWords", typedWords);
+
+  let statsMode: StatsMode = $state<StatsMode>("count");
+  setContext("statsMode", () => statsMode);
+  $inspect(statsMode);
 
   const keyDownHandler = (event: KeyboardEvent) => {
     firstPressTime ??= Date.now();
@@ -94,9 +103,8 @@
 
     lastPressTime = releaseTime;
   };
-  // $inspect(keyPresses['KeyJ']);
 
-  const cursorPosition: number = $derived.by(() => {
+  const cursorPosition: number = $derived.by<number>(() => {
     // Special case for the first word
     if (typedWords.length === 1) {
       return typedWords[0].length;
@@ -109,7 +117,7 @@
       + 1;
   });
 
-  const characterStatus: CharacterStatus[] = $derived.by(() => {
+  const characterStatus: CharacterStatus[] = $derived.by<CharacterStatus[]>(() => {
     const status: CharacterStatus[] = [];
     sampleWords.forEach((word, wordIndex) => {
       // Check for words that have not been typed
@@ -135,7 +143,7 @@
     return status;
   });
 
-  const wpm: number = $derived.by(() => {
+  const wpm: number = $derived.by<number>(() => {
     // Do not count time until the first word is finished
     if (typedWords.length === 1) {
       return 0;
@@ -144,7 +152,7 @@
     return typedWords.length / timeElapsed || 0;
   });
 
-  const accuracy: number = $derived.by(() => {
+  const accuracy: number = $derived.by<number>(() => {
     const correctCharsTyped: number = characterStatus.filter(
       char => char === "correct"
     ).length;
@@ -163,21 +171,26 @@
 
 <main class="flex flex-col gap-14 max-w-screen-xl">
   <TypingArea
-    sampleWords={sampleWords}
-    typedWords={typedWords}
     cursorPosition={cursorPosition}
     characterStatus={characterStatus}
     wpm={wpm}
     accuracy={accuracy}
   />
+  <div>
+    <RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
+      <RadioItem bind:group={statsMode} value="count">Count</RadioItem>
+      <RadioItem bind:group={statsMode} value="duration">Duration</RadioItem>
+      <RadioItem bind:group={statsMode} value="delay">Delay</RadioItem>
+    </RadioGroup>
+  </div>
   <div class="flex gap-14 mx-auto">
     <div>
-      <Keyboard keyPresses={keyPresses} />
+      <Keyboard />
       <br />
-      <PerFingerStats keyPresses={keyPresses} />
+      <PerFingerStats />
     </div>
     <div>
-      <PerRowStats keyPresses={keyPresses} />
+      <PerRowStats />
     </div>
   </div>
 </main>

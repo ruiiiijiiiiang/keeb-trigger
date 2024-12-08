@@ -1,22 +1,21 @@
 <script lang="ts">
+  import { getContext } from "svelte";
   import { clsx } from "@nick/clsx";
   import type { CharacterStatus } from "./types";
 
   const {
-    sampleWords,
-    typedWords,
     cursorPosition,
     characterStatus,
     wpm,
     accuracy,
   }: {
-    sampleWords: string[],
-    typedWords: string[],
     cursorPosition: number,
     characterStatus: CharacterStatus[],
     wpm: number,
     accuracy: number,
   } = $props();
+  const sampleWords: string[] = getContext("sampleWords");
+  const typedWords: string[] = getContext("typedWords");
 </script>
 
 {#snippet stats(stat, label, unit, [lowThreshold, highThreshold])}

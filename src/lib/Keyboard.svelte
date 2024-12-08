@@ -1,14 +1,11 @@
 <script lang="ts">
-  import { Keyboard_Layout } from "./utils";
+  import { getContext } from "svelte";
+  import { Keyboard_Layout, renderStats } from "./utils";
+  import type { KeyPressMap, StatsMode } from "./types";
   import KeyCap from "./KeyCap.svelte";
-  const { keyPresses } = $props();
-
-  /*
-  const duration = 
-    keyPresses[key.name]?.count > 0
-      ? (keyPresses[key.name].totalDuration / keyPresses[key.name].count).toFixed(2)
-      : (0).toFixed(2);
-  */
+  const keyPresses: KeyPressMap = getContext("keyPresses");
+  const getStatsMode = getContext<() => StatsMode>("statsMode");
+  const statsMode: StatsMode = $derived(getStatsMode());
 </script>
 
 <div class="flex flex-col">
@@ -18,11 +15,7 @@
         <KeyCap
           width={key.width}
           topText={key.legend}
-          bottomText={
-            keyPresses[key.name]?.count > 0
-              ? (keyPresses[key.name].totalDuration / keyPresses[key.name].count).toFixed(2)
-              : (0).toFixed(2)
-          }
+          bottomText={renderStats(keyPresses[key.name], statsMode)}
           color={
             key.keyType === "letter" ? "primary" :
             key.keyType === "digit" ? "secondary" :

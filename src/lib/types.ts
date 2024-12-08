@@ -35,6 +35,8 @@ type KeyCapProps = {
 
 type CharacterStatus = "correct" | "incorrect" | "skipped" | "default";
 
+type StatsMode = "count" | "duration" | "delay";
+
 export type {
   KeyType,
   Key,
@@ -43,4 +45,5 @@ export type {
   KeyPressMap,
   KeyCapProps,
   CharacterStatus,
+  StatsMode,
 };

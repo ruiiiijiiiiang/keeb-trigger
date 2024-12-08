@@ -1,6 +1,7 @@
 <script lang="ts">
+  import { getContext } from "svelte";
   import type { KeyPressMap } from "./types";
-  import { getAverageByGroup } from "./utils";
+  import { renderAverageStats } from "./utils";
   import KeyCap from "./KeyCap.svelte";
   const fingersMap = {
     1: "thumb",
@@ -12,7 +13,9 @@
   const leftFingers = Object.keys(fingersMap).reverse();
   const rightFingers = Object.keys(fingersMap);
   const hands = ["L", "R"];
-  const { keyPresses }: { keyPresses: KeyPressMap } = $props();
+  const keyPresses: KeyPressMap = getContext("keyPresses");
+  const getStatsMode = getContext<() => StatsMode>("statsMode");
+  const statsMode: StatsMode = $derived(getStatsMode());
 </script>
 
 <div class="flex justify-center gap-10">
@@ -21,7 +24,7 @@
       {#each fingers as finger}
         <KeyCap
           topText={fingersMap[finger]}
-          bottomText={getAverageByGroup(keyPresses, "finger", `${hands[i]}-${finger}`).toFixed(2)}
+          bottomText={renderAverageStats(keyPresses, statsMode, "finger", `${hands[i]}-${finger}`)}
         />
       {/each}
     </div>

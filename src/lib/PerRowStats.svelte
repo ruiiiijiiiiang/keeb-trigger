@@ -1,8 +1,11 @@
 <script lang="ts">
+  import { getContext } from "svelte";
   import type { KeyPressMap } from "./types";
-  import { getAverageByGroup } from "./utils";
+  import { renderAverageStats } from "./utils";
   import KeyCap from "./KeyCap.svelte";
-  const { keyPresses }: { keyPresses: KeyPressMap } = $props();
+  const keyPresses: KeyPressMap = getContext("keyPresses");
+  const getStatsMode = getContext<() => StatsMode>("statsMode");
+  const statsMode: StatsMode = $derived(getStatsMode());
   const rows = [1, 2, 3, 4, 5];
 </script>
 
@@ -10,7 +13,7 @@
   {#each rows as row}
     <KeyCap
       topText={`Row ${row}`}
-      bottomText={getAverageByGroup(keyPresses, "row", row).toFixed(2)}
+      bottomText={renderAverageStats(keyPresses, statsMode, "row", row)}
     />
   {/each}
 </div>

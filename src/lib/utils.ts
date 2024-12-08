@@ -1,4 +1,4 @@
-import type { Key, KeyboardLayout, KeyPressMap } from "./types";
+import type { Key, KeyboardLayout, KeyPressMap, KeyPress, StatsMode } from "./types";
 
 const Keyboard_Layout: KeyboardLayout = {
   rows: [
@@ -496,13 +496,11 @@ const Keyboard_Layout: KeyboardLayout = {
 
 const Keys = Keyboard_Layout.rows.flat();
 
-const getAverageByGroup = (
-  keyPresses: KeyPressMap,
+const getKeysByGroup = (
   groupType: "finger" | "row",
   group: string | number,
 ) => {
-  let groupedCount = 0, groupedCumulative = 0;
-  let keysByGroup;
+  let keysByGroup = [];
   switch (groupType) {
     case "finger":
       keysByGroup = Keys.filter(
@@ -515,16 +513,53 @@ const getAverageByGroup = (
       );
       break;
   }
-  for (const keyByGroup of keysByGroup) {
-    const pressedKey = keyPresses[keyByGroup.name];
-    if (!pressedKey) {
-      continue;
-    }
-    const { totalDuration, count } = pressedKey;
-    groupedCumulative += (totalDuration / count);
-    groupedCount += 1;
+  return keysByGroup;
+}
+
+const renderAverageStats = (
+  keyPresses: KeyPressMap,
+  statsMode: StatsMode,
+  groupType: "finger" | "row",
+  group: string | number,
+) => {
+  const keysByGroup = getKeysByGroup(groupType, group);
+  const totalCount = keysByGroup.reduce(
+    (count: number, key: Key) => count + keyPresses[key.name].count,
+    0,
+  );
+  if (!totalCount) {
+    return 0;
   }
-  return groupedCumulative / groupedCount || 0;
+  switch (statsMode) {
+    case "count":
+      return totalCount;
+    case "duration":
+      const totalDuration = keysByGroup.reduce(
+        (duration: number, key: Key) => duration + keyPresses[key.name].totalDuration,
+        0,
+      );
+      return (totalDuration / totalCount).toFixed(2);
+    case "delay":
+      const totalDelay = keysByGroup.reduce(
+        (delay: number, key: Key) => delay + keyPresses[key.name].totalDelay,
+        0,
+      );
+      return (totalDelay / totalCount).toFixed(2);
+  }
 };
 
-export { Keys, Keyboard_Layout, getAverageByGroup };
+const renderStats = (keyPress: KeyPress, statsMode: StatsMode) => {
+  if (keyPress.count <= 0) {
+    return 0;
+  }
+  switch (statsMode) {
+    case "count":
+      return keyPress.count;
+    case "duration":
+      return (keyPress.totalDuration / keyPress.count).toFixed(2);
+    case "delay":
+      return (keyPress.totalDelay / keyPress.count).toFixed(2);
+  }
+};
+
+export { Keys, Keyboard_Layout, renderStats, renderAverageStats };
