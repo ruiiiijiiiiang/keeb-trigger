@@ -40,7 +40,6 @@
 
   let statsMode: StatsMode = $state<StatsMode>("count");
   setContext("statsMode", () => statsMode);
-  $inspect(statsMode);
 
   const keyDownHandler = (event: KeyboardEvent) => {
     firstPressTime ??= Date.now();
@@ -176,13 +175,6 @@
     wpm={wpm}
     accuracy={accuracy}
   />
-  <div>
-    <RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-      <RadioItem bind:group={statsMode} value="count">Count</RadioItem>
-      <RadioItem bind:group={statsMode} value="duration">Duration</RadioItem>
-      <RadioItem bind:group={statsMode} value="delay">Delay</RadioItem>
-    </RadioGroup>
-  </div>
   <div class="flex gap-14 mx-auto">
     <div>
       <Keyboard />
@@ -192,5 +184,12 @@
     <div>
       <PerRowStats />
     </div>
+  </div>
+  <div class="mx-auto">
+    <RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
+      <RadioItem bind:group={statsMode} value="count">Count</RadioItem>
+      <RadioItem bind:group={statsMode} value="duration">Duration</RadioItem>
+      <RadioItem bind:group={statsMode} value="delay">Delay</RadioItem>
+    </RadioGroup>
   </div>
 </main>

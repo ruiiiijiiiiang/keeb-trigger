@@ -20,6 +20,7 @@ const config = {
   theme: {
     fontFamily: {
       mono: "SpaceMono",
+      display: "Electrolize",
     },
     extend: {
       keyframes: {

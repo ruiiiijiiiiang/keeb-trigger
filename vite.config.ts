@@ -1,7 +1,8 @@
+import { resolve } from "node:path";
 import { defineConfig } from "vite";
 import deno from "@deno/vite-plugin";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
-import { resolve } from "node:path";
+import { purgeCss } from 'vite-plugin-tailwind-purgecss';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -10,5 +11,5 @@ export default defineConfig({
       $fonts: resolve("./public/assets/fonts/")
     },
   },
-  plugins: [deno(), svelte()],
+  plugins: [deno(), svelte(), purgeCss()],
 });

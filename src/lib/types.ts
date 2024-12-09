@@ -25,13 +25,32 @@ type KeyPress = {
 
 type KeyPressMap = Record<string, KeyPress>;
 
-type KeyCapProps = {
+type KeyCapBase = {
+  mode: "single" | "grouped";
   width: number;
   topText: string;
   bottomText: string;
   color: "primary" | "secondary" | "tertiary";
   pressed: boolean;
 };
+
+type SingleKeyCap = KeyCapBase & {
+  mode: "single";
+  name: string;
+}
+
+type GroupedKeyCap = KeyCapBase & {
+  mode: "grouped";
+  group: string;
+  groupType: "finger" | "row";
+}
+
+type KeyCap<T extends KeyCapBase> =
+  T["mode"] extends "single"
+    ? SingleKeyCap
+    : T["mode"] extends "grouped"
+      ? GroupedKeyCap
+      : never;
 
 type CharacterStatus = "correct" | "incorrect" | "skipped" | "default";
 
@@ -43,7 +62,7 @@ export type {
   KeyboardLayout,
   KeyPress,
   KeyPressMap,
-  KeyCapProps,
+  KeyCap,
   CharacterStatus,
   StatsMode,
 };
