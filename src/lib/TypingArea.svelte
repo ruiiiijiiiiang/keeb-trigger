@@ -1,16 +1,21 @@
 <script lang="ts">
   import { getContext } from "svelte";
   import { clsx } from "@nick/clsx";
+  import TextAA from "phosphor-svelte/lib/TextAA";
+  import Target from "phosphor-svelte/lib/Target";
+  import Clock from "phosphor-svelte/lib/Clock";
   import type { CharacterStatus } from "./types";
 
   const {
     cursorPosition,
     characterStatus,
+    timeElapsed,
     wpm,
     accuracy,
   }: {
     cursorPosition: number,
     characterStatus: CharacterStatus[],
+    timeElapsed: number,
     wpm: number,
     accuracy: number,
   } = $props();
@@ -18,18 +23,18 @@
   const typedWords: string[] = getContext("typedWords");
 </script>
 
-{#snippet stats(stat, label, unit, [lowThreshold, highThreshold])}
+{#snippet stats(icon, stat, label, unit, lowThreshold?, highThreshold?)}
   <div class="flex justify-between items-center">
-    <div class="text-sm text-secondary-400 text-xl">
-      {label}:
+    <div class="text-secondary-400 text-xl">
+      {icon}{label}:
       <span
-        class={clsx("font-bold", {
+        class={clsx("font-bold", highThreshold && lowThreshold && {
           "text-success-500": stat >= highThreshold,
           "text-warning-500": stat >= lowThreshold && stat < highThreshold,
           "text-error-500": stat < lowThreshold,
         })}
       >
-        {`${stat.toFixed(2)}${unit}`}
+        {`${stat.toFixed(0)}${unit}`}
       </span>
     </div>
   </div>
@@ -67,7 +72,8 @@
     {/each}
   </div>
   <div class="flex gap-10">
-    {@render stats(wpm, "Words per minute", "", [40, 60])}
-    {@render stats(accuracy, "Accuracy", "%", [80, 95])}
+    {@render stats(<TextAA />, wpm, "Words per minute", "", 40, 60)}
+    {@render stats(<Target />, accuracy, "Accuracy", "%", 80, 95)}
+    {@render stats(<Clock />, timeElapsed / 1000, "Time", "s")}
   </div>
 </div>

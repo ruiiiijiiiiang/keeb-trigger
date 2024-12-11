@@ -19,10 +19,13 @@ const config = {
   ],
   theme: {
     fontFamily: {
+      sans: "SofiaSansCondensed",
       mono: "SpaceMono",
-      display: "Electrolize",
     },
     extend: {
+      fontFamily: {
+        display: "Electrolize",
+      },
       keyframes: {
         blink: {
           "0%, 100%": { opacity: "1" },
@@ -30,7 +33,7 @@ const config = {
         },
       },
       animation: {
-        cursor: "blink 0.6s ease infinite"
+        cursor: "blink 0.6s ease infinite",
       },
     },
   },

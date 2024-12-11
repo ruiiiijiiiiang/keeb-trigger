@@ -8,7 +8,8 @@
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: local("SpaceMono-Regular"),
+    src:
+      local("SpaceMono-Regular"),
       url("$fonts/SpaceMono-Regular.ttf") format("ttf");
   }
   @font-face {
@@ -16,7 +17,8 @@
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: local("Electrolize-Regular"),
+    src:
+      local("Electrolize-Regular"),
       url("$fonts/Electrolize-Regular.ttf") format("ttf");
   }
   @font-face {
@@ -24,7 +26,8 @@
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: local("SofiaSansCondensed-Regular"),
+    src:
+      local("SofiaSansCondensed-Regular"),
       url("$fonts/SofiaSansCondensed-Regular.ttf") format("ttf");
   }
 
@@ -33,7 +36,7 @@
     place-items: center;
     min-width: 320px;
     min-height: 100vh;
-    font-family: "SofiaSansCondensed", sans-serif;
+    /*font-family: "SofiaSansCondensed", sans-serif;*/
   }
 
   #app {

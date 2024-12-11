@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { setContext } from "svelte";
+  import { setContext, tick } from "svelte";
   import { RadioGroup, RadioItem } from "@skeletonlabs/skeleton";
   import { generate } from "random-words";
   import type { KeyPressMap, StatsMode } from "./lib/types";
@@ -32,6 +32,7 @@
   let inputText: string = $state<string>("");
   let firstPressTime: Date = $state<Date>(null);
   let lastPressTime: Date = $state<Date>(null);
+  let timeElapsed: number = $state(firstPressTime ? Date.now() - firstPressTime : 0);
 
   const sampleWords: string[] = generate(SAMPLE_WORD_LENGTH);
   setContext<string[]>("sampleWords", sampleWords);
@@ -40,6 +41,17 @@
 
   let statsMode: StatsMode = $state<StatsMode>("count");
   setContext("statsMode", () => statsMode);
+
+  $effect(() => {
+    const interval = setInterval(() => {
+      if (!firstPressTime || !lastPressTime) {
+        return;
+      }
+      timeElapsed = Date.now() - firstPressTime;
+      tick();
+    }, 1000);
+    return () => clearInterval(interval);
+  });
 
   const keyDownHandler = (event: KeyboardEvent) => {
     firstPressTime ??= Date.now();
@@ -147,8 +159,7 @@
     if (typedWords.length === 1) {
       return 0;
     }
-    const timeElapsed: number = (lastPressTime - firstPressTime) / 1000 / 60;
-    return typedWords.length / timeElapsed || 0;
+    return typedWords.length / (timeElapsed / 1000 / 60) || 0;
   });
 
   const accuracy: number = $derived.by<number>(() => {
@@ -172,6 +183,7 @@
   <TypingArea
     cursorPosition={cursorPosition}
     characterStatus={characterStatus}
+    timeElapsed={timeElapsed}
     wpm={wpm}
     accuracy={accuracy}
   />
