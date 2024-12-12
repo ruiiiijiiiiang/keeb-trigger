@@ -4,7 +4,9 @@
   import type { KeyPressMap, StatsMode } from "./types";
   import KeyCap from "./KeyCap.svelte";
 
-  const keyPresses: KeyPressMap = getContext("keyPresses");
+  const getKeyPresses: () => KeyPressMap =
+    getContext<() => KeyPressMap>("keyPresses");
+  const keyPresses: KeyPressMap = $derived(getKeyPresses());
   const getStatsMode = getContext<() => StatsMode>("statsMode");
   const statsMode: StatsMode = $derived(getStatsMode());
 </script>
@@ -19,13 +21,11 @@
           width={key.width}
           topText={key.legend}
           bottomText={renderStats(keyPresses[key.name], statsMode)}
-          color={
-            key.keyType === "letter"
-              ? "primary"
-              : key.keyType === "digit"
-                ? "secondary"
-                : "tertiary"
-          }
+          color={key.keyType === "letter"
+            ? "primary"
+            : key.keyType === "digit"
+              ? "secondary"
+              : "tertiary"}
           pressed={keyPresses[key.name]?.pressed}
         />
       {/each}

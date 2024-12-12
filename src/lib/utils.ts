@@ -1,4 +1,10 @@
-import type { Key, KeyboardLayout, KeyPressMap, KeyPress, StatsMode } from "./types";
+import type {
+  Key,
+  KeyboardLayout,
+  KeyPress,
+  KeyPressMap,
+  StatsMode,
+} from "./types.ts";
 
 const Keyboard_Layout: KeyboardLayout = {
   rows: [
@@ -500,30 +506,28 @@ const getKeysByGroup = (
   groupType: "finger" | "row",
   group: string | number,
 ) => {
-  let keysByGroup = [];
+  let keysByGroup: Key[] = [];
   switch (groupType) {
     case "finger":
-      keysByGroup = Keys.filter(
-        (key: Key) => key.fingers.includes(group as string)
+      keysByGroup = Keys.filter((key: Key) =>
+        key.fingers.includes(group as string)
       );
       break;
     case "row":
-      keysByGroup = Keys.filter(
-        (key: Key) => key.row === group
-      );
+      keysByGroup = Keys.filter((key: Key) => key.row === group);
       break;
   }
   return keysByGroup;
-}
+};
 
-const formatToMs = (num: number): string => `${num.toFixed(0)} ms`;
+const formatWithUnit = (num: number): string => `${num.toFixed(0)} ms`;
 
 const renderAverageStats = (
   keyPresses: KeyPressMap,
   statsMode: StatsMode,
   groupType: "finger" | "row",
   group: string | number,
-) => {
+): string => {
   const keysByGroup = getKeysByGroup(groupType, group);
   const totalCount = keysByGroup.reduce(
     (count: number, key: Key) => count + keyPresses[key.name].count,
@@ -534,41 +538,37 @@ const renderAverageStats = (
   }
   switch (statsMode) {
     case "count":
-      return totalCount;
+      return totalCount.toString();
     case "duration": {
       const totalDuration = keysByGroup.reduce(
-        (duration: number, key: Key) => duration + keyPresses[key.name].totalDuration,
+        (duration: number, key: Key) =>
+          duration + keyPresses[key.name].totalDuration,
         0,
       );
-      return formatToMs(totalDuration / totalCount);
+      return formatWithUnit(totalDuration / totalCount);
     }
     case "delay": {
       const totalDelay = keysByGroup.reduce(
         (delay: number, key: Key) => delay + keyPresses[key.name].totalDelay,
         0,
       );
-      return formatToMs(totalDelay / totalCount);
+      return formatWithUnit(totalDelay / totalCount);
     }
   }
 };
 
-const renderStats = (keyPress: KeyPress, statsMode: StatsMode) => {
+const renderStats = (keyPress: KeyPress, statsMode: StatsMode): string => {
   if (!keyPress.count) {
     return "0";
   }
   switch (statsMode) {
     case "count":
-      return keyPress.count;
+      return keyPress.count.toString();
     case "duration":
-      return formatToMs(keyPress.totalDuration / keyPress.count);
+      return formatWithUnit(keyPress.totalDuration / keyPress.count);
     case "delay":
-      return formatToMs(keyPress.totalDelay / keyPress.count);
+      return formatWithUnit(keyPress.totalDelay / keyPress.count);
   }
 };
 
-export {
-  Keys,
-  Keyboard_Layout,
-  renderStats,
-  renderAverageStats,
-};
+export { Keyboard_Layout, Keys, renderAverageStats, renderStats };

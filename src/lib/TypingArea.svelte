@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { getContext } from "svelte";
+  import { getContext, type Component } from "svelte";
   import { clsx } from "@nick/clsx";
-  import TextAA from "phosphor-svelte/lib/TextAA";
-  import Target from "phosphor-svelte/lib/Target";
-  import Clock from "phosphor-svelte/lib/Clock";
+  import { TextAa } from "phosphor-svelte";
+  import { Target } from "phosphor-svelte";
+  import { Clock } from "phosphor-svelte";
   import type { CharacterStatus } from "./types";
 
   const {
@@ -13,26 +13,37 @@
     wpm,
     accuracy,
   }: {
-    cursorPosition: number,
-    characterStatus: CharacterStatus[],
-    timeElapsed: number,
-    wpm: number,
-    accuracy: number,
+    cursorPosition: number;
+    characterStatus: CharacterStatus[];
+    timeElapsed: number;
+    wpm: number;
+    accuracy: number;
   } = $props();
-  const sampleWords: string[] = getContext("sampleWords");
-  const typedWords: string[] = getContext("typedWords");
+  const getSampleWords = getContext<() => string[]>("sampleWords");
+  const sampleWords = $derived(getSampleWords());
 </script>
 
-{#snippet stats(icon, stat, label, unit, lowThreshold?, highThreshold?)}
+{#snippet stats(
+  Icon: Component,
+  stat: number,
+  label: string,
+  unit: string,
+  lowThreshold?: number,
+  highThreshold?: number,
+)}
   <div class="flex justify-between items-center">
-    <div class="text-secondary-400 text-xl">
-      {icon}{label}:
+    <div class="text-secondary-400 text-xl flex items-center gap-2">
+      <Icon weight="duotone" />{label}:
       <span
-        class={clsx("font-bold", highThreshold && lowThreshold && {
-          "text-success-500": stat >= highThreshold,
-          "text-warning-500": stat >= lowThreshold && stat < highThreshold,
-          "text-error-500": stat < lowThreshold,
-        })}
+        class={clsx(
+          "font-bold",
+          highThreshold &&
+            lowThreshold && {
+              "text-success-500": stat >= highThreshold,
+              "text-warning-500": stat >= lowThreshold && stat < highThreshold,
+              "text-error-500": stat < lowThreshold,
+            },
+        )}
       >
         {`${stat.toFixed(0)}${unit}`}
       </span>
@@ -40,11 +51,10 @@
   </div>
 {/snippet}
 
-<div
-  class="mx-auto p-6 text-center"
->
+<div class="mx-auto p-6 text-center">
   <h2 class="text-5xl font-bold mb-4">Keeb Trigger</h2>
-  <div class="
+  <div
+    class="
     variant-soft-primary
     card
     border-2
@@ -56,7 +66,8 @@
     font-mono
     text-2xl
     cursor-text
-  ">
+  "
+  >
     {#each [...sampleWords.join(" ")] as char, index}
       <span
         class={clsx({
@@ -72,8 +83,8 @@
     {/each}
   </div>
   <div class="flex gap-10">
-    {@render stats(<TextAA />, wpm, "Words per minute", "", 40, 60)}
-    {@render stats(<Target />, accuracy, "Accuracy", "%", 80, 95)}
-    {@render stats(<Clock />, timeElapsed / 1000, "Time", "s")}
+    {@render stats(TextAa, wpm, "Words per minute", "", 40, 60)}
+    {@render stats(Target, accuracy, "Accuracy", "%", 80, 95)}
+    {@render stats(Clock, timeElapsed / 1000, "Time", "s")}
   </div>
 </div>

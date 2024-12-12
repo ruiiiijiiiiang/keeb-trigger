@@ -1,8 +1,9 @@
 <script lang="ts">
   import { setContext, tick } from "svelte";
   import { RadioGroup, RadioItem } from "@skeletonlabs/skeleton";
+  import { ArrowClockwise } from "phosphor-svelte";
   import { generate } from "random-words";
-  import type { KeyPressMap, StatsMode } from "./lib/types";
+  import type { KeyPressMap, StatsMode, CharacterStatus } from "./lib/types";
   import { Keys } from "./lib/utils";
   import Keyboard from "./lib/Keyboard.svelte";
   import PerFingerStats from "./lib/PerFingerStats.svelte";
@@ -13,11 +14,11 @@
 
   const initialKeyPress = () => {
     const keyPresses = {};
-    Keys.forEach(key => {
+    Keys.forEach((key) => {
       keyPresses[key.name] = {
         count: 0,
         pressed: false,
-        pressTime: undefined,
+        pressTime: 0,
         totalDuration: 0,
         totalDelay: 0,
         correctPressCount: 0,
@@ -28,19 +29,21 @@
   };
 
   let keyPresses: KeyPressMap = $state<KeyPressMap>(initialKeyPress());
-  setContext<KeyPressMap>("keyPresses", keyPresses);
+  setContext<() => KeyPressMap>("keyPresses", () => keyPresses);
   let inputText: string = $state<string>("");
-  let firstPressTime: Date = $state<Date>(null);
-  let lastPressTime: Date = $state<Date>(null);
-  let timeElapsed: number = $state(firstPressTime ? Date.now() - firstPressTime : 0);
+  let firstPressTime: number = $state<number>(undefined);
+  let lastPressTime: number = $state<number>(undefined);
+  let timeElapsed: number = $state(0);
 
-  const sampleWords: string[] = generate(SAMPLE_WORD_LENGTH);
-  setContext<string[]>("sampleWords", sampleWords);
+  let sampleWords: string[] = $state<string[]>(
+    generate(SAMPLE_WORD_LENGTH) as string[],
+  );
+  setContext<() => string[]>("sampleWords", () => sampleWords);
   const typedWords: string[] = $derived<string[]>(inputText.split(" "));
-  setContext<string[]>("typedWords", typedWords);
+  setContext<() => string[]>("typedWords", () => typedWords);
 
   let statsMode: StatsMode = $state<StatsMode>("count");
-  setContext("statsMode", () => statsMode);
+  setContext<() => StatsMode>("statsMode", () => statsMode);
 
   $effect(() => {
     const interval = setInterval(() => {
@@ -79,12 +82,19 @@
       return;
     }
 
-    let { totalDuration, pressTime, count, totalDelay, correctPressCount, incorrectPressCount } = keyPresses[code];
+    let {
+      totalDuration,
+      pressTime,
+      count,
+      totalDelay,
+      correctPressCount,
+      incorrectPressCount,
+    } = keyPresses[code];
     const nextLetter = sampleWords.join(" ").charAt(cursorPosition);
     if (nextLetter === key) {
       correctPressCount += 1;
       if (lastPressTime) {
-        totalDelay += (releaseTime - lastPressTime);
+        totalDelay += releaseTime - lastPressTime;
       }
     } else {
       //TODO: find a more elegant way to handle this
@@ -93,7 +103,7 @@
         incorrectPressCount: incorrectPressCount + 1,
       };
     }
-    totalDuration += (releaseTime - pressTime);
+    totalDuration += releaseTime - pressTime;
     count += 1;
     keyPresses[code] = {
       ...keyPresses[code],
@@ -121,38 +131,49 @@
       return typedWords[0].length;
     }
     const numWordsFinished = typedWords.length - 1;
-    const wordsTyped: string[] = sampleWords.slice(0, numWordsFinished - sampleWords.length);
+    const wordsTyped: string[] = sampleWords.slice(
+      0,
+      numWordsFinished - sampleWords.length,
+    );
     const lastTypedWord: string = typedWords.at(-1);
-    return wordsTyped.join(" ").length
-      + Math.min(sampleWords.at(numWordsFinished).length, lastTypedWord.length)
-      + 1;
+    return (
+      wordsTyped.join(" ").length +
+      Math.min(sampleWords.at(numWordsFinished).length, lastTypedWord.length) +
+      1
+    );
   });
 
-  const characterStatus: CharacterStatus[] = $derived.by<CharacterStatus[]>(() => {
-    const status: CharacterStatus[] = [];
-    sampleWords.forEach((word, wordIndex) => {
-      // Check for words that have not been typed
-      if (wordIndex >= typedWords.length) {
-        [...word].forEach(() => {
-          status.push("default")
-        });
-      } else {
-        // Check for words that have been typed
-        const inputWord: string = typedWords[wordIndex];
-        [...word].forEach((char, charIndex) => {
-          if (charIndex >= inputWord.length) {
-            // Check if the current word is the last typed word
-            status.push(wordIndex === typedWords.length - 1 ? "default" : "skipped");
-          } else {
-            status.push(inputWord[charIndex] === char ? "correct" : "incorrect");
-          }
-        });
-      }
-      // Append space after each word
-      status.push("default");
-    });
-    return status;
-  });
+  const characterStatus: CharacterStatus[] = $derived.by<CharacterStatus[]>(
+    () => {
+      const status: CharacterStatus[] = [];
+      sampleWords.forEach((word, wordIndex) => {
+        // Check for words that have not been typed
+        if (wordIndex >= typedWords.length) {
+          [...word].forEach(() => {
+            status.push("default");
+          });
+        } else {
+          // Check for words that have been typed
+          const inputWord: string = typedWords[wordIndex];
+          [...word].forEach((char, charIndex) => {
+            if (charIndex >= inputWord.length) {
+              // Check if the current word is the last typed word
+              status.push(
+                wordIndex === typedWords.length - 1 ? "default" : "skipped",
+              );
+            } else {
+              status.push(
+                inputWord[charIndex] === char ? "correct" : "incorrect",
+              );
+            }
+          });
+        }
+        // Append space after each word
+        status.push("default");
+      });
+      return status;
+    },
+  );
 
   const wpm: number = $derived.by<number>(() => {
     // Do not count time until the first word is finished
@@ -164,28 +185,36 @@
 
   const accuracy: number = $derived.by<number>(() => {
     const correctCharsTyped: number = characterStatus.filter(
-      char => char === "correct"
+      (char) => char === "correct",
     ).length;
-    const incorrectCharsTyped: number = characterStatus.filter(
-      char => ["incorrect", "skipped"].includes(char)
+    const incorrectCharsTyped: number = characterStatus.filter((char) =>
+      ["incorrect", "skipped"].includes(char),
     ).length;
-    return correctCharsTyped / (correctCharsTyped + incorrectCharsTyped) * 100 || 100;
+    return (
+      (correctCharsTyped / (correctCharsTyped + incorrectCharsTyped)) * 100 ||
+      100
+    );
   });
 
+  const reset = () => {
+    sampleWords = generate(SAMPLE_WORD_LENGTH) as string[];
+    keyPresses = initialKeyPress();
+    inputText = "";
+    firstPressTime = undefined;
+    lastPressTime = undefined;
+    timeElapsed = 0;
+  };
 </script>
 
-<svelte:window
-  onkeyup = {keyUpHandler}
-  onkeydown = {keyDownHandler}
-/>
+<svelte:window onkeyup={keyUpHandler} onkeydown={keyDownHandler} />
 
 <main class="flex flex-col gap-14 max-w-screen-xl">
   <TypingArea
-    cursorPosition={cursorPosition}
-    characterStatus={characterStatus}
-    timeElapsed={timeElapsed}
-    wpm={wpm}
-    accuracy={accuracy}
+    {cursorPosition}
+    {characterStatus}
+    {timeElapsed}
+    {wpm}
+    {accuracy}
   />
   <div class="flex gap-14 mx-auto">
     <div>
@@ -197,11 +226,26 @@
       <PerRowStats />
     </div>
   </div>
-  <div class="mx-auto">
-    <RadioGroup active="variant-filled-primary" hover="hover:variant-soft-primary">
-      <RadioItem bind:group={statsMode} value="count">Count</RadioItem>
-      <RadioItem bind:group={statsMode} value="duration">Duration</RadioItem>
-      <RadioItem bind:group={statsMode} value="delay">Delay</RadioItem>
+  <div class="mx-auto flex gap-6">
+    <RadioGroup
+      active="variant-glass-primary"
+      hover="hover:variant-soft-primary"
+    >
+      <RadioItem name="statsMode" bind:group={statsMode} value="count"
+        >Count</RadioItem
+      >
+      <RadioItem name="statsMode" bind:group={statsMode} value="duration"
+        >Duration</RadioItem
+      >
+      <RadioItem name="statsMode" bind:group={statsMode} value="delay"
+        >Delay</RadioItem
+      >
     </RadioGroup>
+    <div>
+      <button class="btn variant-glass-primary" type="button" onclick={reset}>
+        <span><ArrowClockwise weight="duotone" /></span>
+        <span>Reset</span>
+      </button>
+    </div>
   </div>
 </main>

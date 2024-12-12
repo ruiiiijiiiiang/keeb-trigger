@@ -19,12 +19,11 @@ const config = {
   ],
   theme: {
     fontFamily: {
-      sans: "SofiaSansCondensed",
       mono: "SpaceMono",
     },
     extend: {
       fontFamily: {
-        display: "Electrolize",
+        condensed: "SofiaSansCondensed",
       },
       keyframes: {
         blink: {
