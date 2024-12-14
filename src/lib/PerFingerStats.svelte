@@ -22,9 +22,9 @@
   const hands = ["L", "R"];
 </script>
 
-<div class="flex justify-center gap-10">
+<div class="flex justify-center gap-12">
   {#each [leftFingers, rightFingers] as fingers, i}
-    <div class="card variant-ghost-primary flex justify-center gap-4">
+    <div class="card variant-ghost-primary flex justify-center gap-5">
       {#each fingers as finger}
         <KeyCap
           mode={"grouped"}

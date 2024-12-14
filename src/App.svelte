@@ -10,7 +10,7 @@
   import PerRowStats from "./lib/PerRowStats.svelte";
   import TypingArea from "./lib/TypingArea.svelte";
 
-  const SAMPLE_WORD_LENGTH: number = 50;
+  const SAMPLE_WORD_LENGTH: number = 30;
 
   const initialKeyPress = () => {
     const keyPresses = {};
@@ -21,8 +21,9 @@
         pressTime: 0,
         totalDuration: 0,
         totalDelay: 0,
-        correctPressCount: 0,
-        incorrectPressCount: 0,
+        correctCount: 0,
+        falsePositiveCount: 0,
+        falseNegativeCount: 0,
       };
     });
     return keyPresses;
@@ -33,7 +34,10 @@
   let inputText: string = $state<string>("");
   let firstPressTime: number = $state<number>(undefined);
   let lastPressTime: number = $state<number>(undefined);
-  let timeElapsed: number = $state(0);
+  let timeElapsed: number = $state<number>(0);
+  let typedWordsCounter: number = $state<number>(0);
+  let pausedAt: number = $state<number>(undefined);
+  let timeStampedAt: number = $state<number>(undefined);
 
   let sampleWords: string[] = $state<string[]>(
     generate(SAMPLE_WORD_LENGTH) as string[],
@@ -50,8 +54,17 @@
       if (!firstPressTime || !lastPressTime) {
         return;
       }
-      timeElapsed = Date.now() - firstPressTime;
-      tick();
+      if (Date.now() - lastPressTime >= 3000) {
+        pausedAt ??= Date.now();
+        return;
+      }
+      if (pausedAt) {
+        timeElapsed += pausedAt - timeStampedAt;
+        pausedAt = undefined;
+      } else {
+        timeElapsed += Date.now() - (timeStampedAt || firstPressTime);
+      }
+      timeStampedAt = Date.now();
     }, 1000);
     return () => clearInterval(interval);
   });
@@ -71,12 +84,14 @@
   };
 
   const keyUpHandler = (event: KeyboardEvent) => {
+    //TODO: handle escape
     const releaseTime = Date.now();
 
     const { code, key } = event;
     // TODO: handle space
     if (code === "Space") {
       event.preventDefault();
+      typedWordsCounter += 1;
     }
     if (!keyPresses[code] || !keyPresses[code].pressTime) {
       return;
@@ -87,21 +102,26 @@
       pressTime,
       count,
       totalDelay,
-      correctPressCount,
-      incorrectPressCount,
+      correctCount,
+      falsePositiveCount,
+      falseNegativeCount,
     } = keyPresses[code];
     const nextLetter = sampleWords.join(" ").charAt(cursorPosition);
     if (nextLetter === key) {
-      correctPressCount += 1;
-      if (lastPressTime) {
-        totalDelay += releaseTime - lastPressTime;
-      }
+      correctCount += 1;
     } else {
-      //TODO: find a more elegant way to handle this
-      keyPresses[`Key${nextLetter.toUpperCase()}`] = {
-        ...keyPresses[`Key${nextLetter.toUpperCase()}`],
-        incorrectPressCount: incorrectPressCount + 1,
+      const nextLetterCode = `Key${nextLetter.toUpperCase()}`;
+      keyPresses[nextLetterCode] = {
+        ...keyPresses[nextLetterCode],
+        falsePositiveCount: falsePositiveCount + 1,
       };
+      keyPresses[code] = {
+        ...keyPresses[code],
+        falseNegativeCount: falseNegativeCount + 1,
+      };
+    }
+    if (lastPressTime) {
+      totalDelay += releaseTime - lastPressTime;
     }
     totalDuration += releaseTime - pressTime;
     count += 1;
@@ -112,7 +132,7 @@
       count,
       totalDelay,
       pressed: false,
-      correctPressCount,
+      correctCount,
     };
 
     if (code === "Backspace") {
@@ -176,11 +196,7 @@
   );
 
   const wpm: number = $derived.by<number>(() => {
-    // Do not count time until the first word is finished
-    if (typedWords.length === 1) {
-      return 0;
-    }
-    return typedWords.length / (timeElapsed / 1000 / 60) || 0;
+    return typedWordsCounter / (timeElapsed / 1000 / 60) || 0;
   });
 
   const accuracy: number = $derived.by<number>(() => {
@@ -196,6 +212,14 @@
     );
   });
 
+  const lineFeed = () => {
+    const sampleText = sampleWords.join(" ");
+    const remainingText = sampleText.slice(cursorPosition);
+    const addedSampleWords = generate(SAMPLE_WORD_LENGTH);
+    sampleWords = [...remainingText.split(" "), ...addedSampleWords];
+    inputText = "";
+  };
+
   const reset = () => {
     sampleWords = generate(SAMPLE_WORD_LENGTH) as string[];
     keyPresses = initialKeyPress();
@@ -203,21 +227,26 @@
     firstPressTime = undefined;
     lastPressTime = undefined;
     timeElapsed = 0;
+    typedWordsCounter = 0;
+    pausedAt = undefined;
+    timeStampedAt = undefined;
   };
 </script>
 
 <svelte:window onkeyup={keyUpHandler} onkeydown={keyDownHandler} />
 
-<main class="flex flex-col gap-14 max-w-screen-xl">
+<main class="flex flex-col gap-14 max-w-[1048px]">
   <TypingArea
     {cursorPosition}
     {characterStatus}
     {timeElapsed}
     {wpm}
     {accuracy}
+    {lineFeed}
+    {pausedAt}
   />
-  <div class="flex gap-14 mx-auto">
-    <div>
+  <div class="flex gap-6 mx-auto">
+    <div class="flex flex-col gap-6">
       <Keyboard />
       <br />
       <PerFingerStats />

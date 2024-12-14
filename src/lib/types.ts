@@ -19,8 +19,9 @@ type KeyPress = {
   pressTime: number;
   totalDuration: number;
   totalDelay: number;
-  correctPressCount: number;
-  incorrectPressCount: number;
+  correctCount: number;
+  falsePositiveCount: number;
+  falseNegativeCount: number;
 };
 
 type KeyPressMap = Record<string, KeyPress>;

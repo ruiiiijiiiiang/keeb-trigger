@@ -105,17 +105,23 @@
           : renderAverageStats(keyPresses, "count", groupType, group),
       )}
       {@render statLi(
-        "Duration",
+        "Average Duration",
         mode === "single"
           ? renderStats(keyPresses[name], "duration")
           : renderAverageStats(keyPresses, "duration", groupType, group),
       )}
       {@render statLi(
-        "Delay",
+        "Average Delay",
         mode === "single"
           ? renderStats(keyPresses[name], "delay")
           : renderAverageStats(keyPresses, "delay", groupType, group),
       )}
+      <!-- {@render statLi( -->
+      <!--   "Correct Presses", -->
+      <!--   mode === "single" -->
+      <!--     ? renderStats(keyPresses[name], "delay") -->
+      <!--     : renderAverageStats(keyPresses, "delay", groupType, group), -->
+      <!-- )} -->
     </ul>
   </div>
 </div>
