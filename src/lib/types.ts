@@ -30,8 +30,17 @@ type CharacterStatus = "correct" | "incorrect" | "skipped" | "default";
 
 type StatsMode = "count" | "duration" | "delay";
 
+type ColorPalette =
+  | "primary"
+  | "secondary"
+  | "tertiary"
+  | "success"
+  | "warning"
+  | "error";
+
 export type {
   CharacterStatus,
+  ColorPalette,
   Key,
   KeyboardLayout,
   KeyPress,

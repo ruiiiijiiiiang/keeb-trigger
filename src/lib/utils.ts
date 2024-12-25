@@ -1,8 +1,8 @@
 import type {
-  Key,
+  ColorPalette,
   KeyboardLayout,
   KeyPress,
-  KeyPressMap,
+  KeyType,
   StatsMode,
 } from "./types.ts";
 
@@ -502,73 +502,161 @@ const Keyboard_Layout: KeyboardLayout = {
 
 const Keys = Keyboard_Layout.rows.flat();
 
-const getKeysByGroup = (
-  groupType: "finger" | "row",
-  group: string | number,
-) => {
-  let keysByGroup: Key[] = [];
-  switch (groupType) {
-    case "finger":
-      keysByGroup = Keys.filter((key: Key) =>
-        key.fingers.includes(group as string)
-      );
-      break;
-    case "row":
-      keysByGroup = Keys.filter((key: Key) => key.row === group);
-      break;
+const computeSingleStats = (
+  keyPress: KeyPress,
+  statsMode: StatsMode,
+): number => {
+  if (!keyPress.count) {
+    return 0;
   }
-  return keysByGroup;
+  switch (statsMode) {
+    case "count":
+      return keyPress.count;
+    case "duration":
+      return keyPress.totalDuration / keyPress.count;
+    case "delay":
+      return keyPress.totalDelay / keyPress.count;
+  }
 };
 
-const formatWithUnit = (num: number): string => `${num.toFixed(0)} ms`;
-
-const renderAverageStats = (
-  keyPresses: KeyPressMap,
+const computeGroupedStats = (
+  groupedKeyPresses: KeyPress[],
   statsMode: StatsMode,
-  groupType: "finger" | "row",
-  group: string | number,
-): string => {
-  const keysByGroup = getKeysByGroup(groupType, group);
-  const totalCount = keysByGroup.reduce(
-    (count: number, key: Key) => count + keyPresses[key.name].count,
+): number => {
+  const totalCount = groupedKeyPresses.reduce(
+    (count: number, keyPress: KeyPress) => count + keyPress.count,
     0,
   );
   if (!totalCount) {
-    return "0";
+    return 0;
   }
   switch (statsMode) {
     case "count":
-      return totalCount.toString();
+      return totalCount;
     case "duration": {
-      const totalDuration = keysByGroup.reduce(
-        (duration: number, key: Key) =>
-          duration + keyPresses[key.name].totalDuration,
+      const totalDuration = groupedKeyPresses.reduce(
+        (duration: number, keyPress: KeyPress) =>
+          duration + keyPress.totalDuration,
         0,
       );
-      return formatWithUnit(totalDuration / totalCount);
+      return totalDuration / totalCount;
     }
     case "delay": {
-      const totalDelay = keysByGroup.reduce(
-        (delay: number, key: Key) => delay + keyPresses[key.name].totalDelay,
+      const totalDelay = groupedKeyPresses.reduce(
+        (delay: number, keyPress: KeyPress) => delay + keyPress.totalDelay,
         0,
       );
-      return formatWithUnit(totalDelay / totalCount);
+      return totalDelay / totalCount;
     }
   }
 };
 
-const renderStats = (keyPress: KeyPress, statsMode: StatsMode): string => {
-  if (!keyPress.count) {
-    return "0";
-  }
-  switch (statsMode) {
-    case "count":
-      return keyPress.count.toString();
-    case "duration":
-      return formatWithUnit(keyPress.totalDuration / keyPress.count);
-    case "delay":
-      return formatWithUnit(keyPress.totalDelay / keyPress.count);
-  }
+const renderSingleStats = (
+  keyPress: KeyPress,
+  statsMode: StatsMode,
+): string => {
+  const stats = computeSingleStats(keyPress, statsMode);
+  return `${Math.round(stats)}${statsMode === "count" ? "" : " ms"}`;
 };
 
-export { Keyboard_Layout, Keys, renderAverageStats, renderStats };
+const renderGroupedStats = (
+  groupedKeyPresses: KeyPress[],
+  statsMode: StatsMode,
+): string => {
+  const stats = computeGroupedStats(groupedKeyPresses, statsMode);
+  return `${stats.toFixed(0)}${statsMode === "count" ? "" : " ms"}`;
+};
+
+const computeBackground = (
+  stats: number,
+  statsMode: StatsMode,
+): string => {
+  let THRESHOLD_MAP: number[] = [];
+  if (statsMode !== "count") {
+    if (statsMode === "duration") {
+      THRESHOLD_MAP = DURATION_THRESHOLD_MAP;
+    } else if (statsMode === "delay") {
+      THRESHOLD_MAP = DELAY_THRESHOLD_MAP;
+    }
+    for (let i = 0; i < THRESHOLD_MAP.length; i++) {
+      if (stats < THRESHOLD_MAP[i]) {
+        return SCALED_COLOR_MAP[i];
+      }
+    }
+  }
+  return "";
+};
+
+const computeSingleBackground = (
+  keyPress: KeyPress,
+  statsMode: StatsMode,
+  keyType: KeyType,
+) => {
+  const stats = computeSingleStats(keyPress, statsMode);
+  const background = computeBackground(stats, statsMode);
+  return background || `--color-${KEYTYPE_COLOR_MAP[keyType]}-300`;
+};
+
+const computeGroupedBackground = (
+  groupedKeyPresses: KeyPress[],
+  statsMode: StatsMode,
+): string => {
+  const stats = computeGroupedStats(groupedKeyPresses, statsMode);
+  const background = computeBackground(stats, statsMode);
+  return background || "--color-primary-300";
+};
+
+const SCALED_COLOR_MAP: string[] = [
+  "",
+  "--color-success-600",
+  "--color-success-500",
+  "--color-success-400",
+  "--color-warning-600",
+  "--color-warning-500",
+  "--color-warning-500",
+  "--color-error-600",
+  "--color-error-500",
+  "--color-error-500",
+];
+
+const DURATION_THRESHOLD_MAP: number[] = [
+  1,
+  40,
+  45,
+  50,
+  55,
+  60,
+  65,
+  70,
+  75,
+  80,
+];
+
+const DELAY_THRESHOLD_MAP: number[] = [
+  1,
+  50,
+  75,
+  100,
+  125,
+  150,
+  175,
+  200,
+  225,
+  250,
+];
+
+const KEYTYPE_COLOR_MAP: Record<KeyType, ColorPalette> = {
+  letter: "primary",
+  digit: "secondary",
+  mod: "tertiary",
+};
+
+export {
+  computeGroupedBackground,
+  computeSingleBackground,
+  Keyboard_Layout,
+  Keys,
+  KEYTYPE_COLOR_MAP,
+  renderGroupedStats,
+  renderSingleStats,
+};

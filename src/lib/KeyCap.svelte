@@ -1,34 +1,30 @@
 <script lang="ts">
-  import { getContext } from "svelte";
   import { clsx } from "@nick/clsx";
   import { popup } from "@skeletonlabs/skeleton";
-  import type { KeyPressMap } from "./types";
-  import { renderStats, renderAverageStats } from "./utils";
+  import type { KeyPress, ColorPalette } from "./types";
+  import { renderSingleStats, renderGroupedStats } from "./utils";
 
   const {
     mode,
-    name,
-    groupType,
-    group,
     width = 1,
-    topText = "",
-    bottomText = "",
+    topText,
+    bottomText,
     color = "primary",
     pressed = false,
+    background = "",
+    keyPress = undefined,
+    groupedKeyPresses = [],
   }: {
     mode: "single" | "grouped";
-    name?: string;
-    groupType?: "finger" | "row";
-    group?: number | string;
     width?: number;
     topText: string;
     bottomText: string;
-    color?: "primary" | "secondary" | "tertiary";
+    color?: ColorPalette;
     pressed?: boolean;
+    background: string;
+    keyPress?: KeyPress;
+    groupedKeyPresses?: KeyPress[];
   } = $props();
-  const getKeyPresses: () => KeyPressMap =
-    getContext<() => KeyPressMap>("keyPresses");
-  const keyPresses: KeyPressMap = $derived(getKeyPresses());
 </script>
 
 {#snippet statLi(label: string, stat: string)}
@@ -84,7 +80,7 @@
     )}
     style="width: calc(100% - 5px);
       height: calc(100% - 8px);
-      background: rgba(var(--color-{color}-300) / 1);"
+      background: rgba(var({background}) / 1);"
   >
     <div class="font-bold text-secondary-900 min-h-6">
       {topText}
@@ -94,27 +90,27 @@
     </div>
   </div>
   <div
-    class="card p-4 variant-glass-secondary w-40"
+    class="card p-4 variant-glass-secondary w-60"
     data-popup="statPopup-{topText}"
   >
     <ul class="list">
       {@render statLi(
         "Count",
         mode === "single"
-          ? renderStats(keyPresses[name], "count")
-          : renderAverageStats(keyPresses, "count", groupType, group),
+          ? renderSingleStats(keyPress, "count")
+          : renderGroupedStats(groupedKeyPresses, "count"),
       )}
       {@render statLi(
         "Average Duration",
         mode === "single"
-          ? renderStats(keyPresses[name], "duration")
-          : renderAverageStats(keyPresses, "duration", groupType, group),
+          ? renderSingleStats(keyPress, "duration")
+          : renderGroupedStats(groupedKeyPresses, "duration"),
       )}
       {@render statLi(
         "Average Delay",
         mode === "single"
-          ? renderStats(keyPresses[name], "delay")
-          : renderAverageStats(keyPresses, "delay", groupType, group),
+          ? renderSingleStats(keyPress, "delay")
+          : renderGroupedStats(groupedKeyPresses, "delay"),
       )}
       <!-- {@render statLi( -->
       <!--   "Correct Presses", -->
