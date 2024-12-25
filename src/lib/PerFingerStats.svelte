@@ -1,7 +1,8 @@
 <script lang="ts">
   import { getContext } from "svelte";
   import type { KeyPress, KeyPressMap, StatsMode, Key } from "./types";
-  import { renderGroupedStats, computeGroupedBackground, Keys } from "./utils";
+  import { renderGroupedStats, computeGroupedBackground } from "./utils";
+  import { KEYS } from "./const";
   import KeyCap from "./KeyCap.svelte";
 
   const getKeyPresses: () => KeyPressMap =
@@ -26,7 +27,7 @@
   {#each [leftFingers, rightFingers] as fingers, i}
     <div class="card variant-ghost-primary flex justify-center gap-5">
       {#each fingers as finger}
-        {@const keyGroup: Key[] = Keys.filter((key: Key) =>
+        {@const keyGroup: Key[] = KEYS.filter((key: Key) =>
           key.fingers.includes(`${hands[i]}-${finger}`),
         )}
         {@const groupedKeyPresses: KeyPress[] = keyGroup.map((key) => keyPresses[key.name])}

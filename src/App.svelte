@@ -3,8 +3,13 @@
   import { RadioGroup, RadioItem } from "@skeletonlabs/skeleton";
   import { ArrowClockwise } from "phosphor-svelte";
   import { generate } from "random-words";
-  import type { KeyPressMap, StatsMode, CharacterStatus } from "./lib/types";
-  import { Keys } from "./lib/utils";
+  import type {
+    Key,
+    KeyPressMap,
+    StatsMode,
+    CharacterStatus,
+  } from "./lib/types";
+  import { KEYS } from "./lib/const";
   import Keyboard from "./lib/Keyboard.svelte";
   import PerFingerStats from "./lib/PerFingerStats.svelte";
   import PerRowStats from "./lib/PerRowStats.svelte";
@@ -14,13 +19,13 @@
 
   const initialKeyPress = () => {
     const keyPresses = {};
-    Keys.forEach((key) => {
+    KEYS.forEach((key: Key) => {
       keyPresses[key.name] = {
         count: 0,
         pressed: false,
         pressTime: 0,
         totalDuration: 0,
-        totalDelay: 0,
+        totalGap: 0,
         correctCount: 0,
         falsePositiveCount: 0,
         falseNegativeCount: 0,
@@ -101,7 +106,7 @@
       totalDuration,
       pressTime,
       count,
-      totalDelay,
+      totalGap,
       correctCount,
       falsePositiveCount,
       falseNegativeCount,
@@ -121,7 +126,7 @@
       };
     }
     if (lastPressTime) {
-      totalDelay += releaseTime - lastPressTime;
+      totalGap += releaseTime - lastPressTime;
     }
     totalDuration += releaseTime - pressTime;
     count += 1;
@@ -130,7 +135,7 @@
       pressTime: undefined,
       totalDuration,
       count,
-      totalDelay,
+      totalGap,
       pressed: false,
       correctCount,
     };
@@ -266,8 +271,11 @@
       <RadioItem name="statsMode" bind:group={statsMode} value="duration"
         >Duration</RadioItem
       >
-      <RadioItem name="statsMode" bind:group={statsMode} value="delay"
-        >Delay</RadioItem
+      <RadioItem name="statsMode" bind:group={statsMode} value="gap"
+        >Gap</RadioItem
+      >
+      <RadioItem name="statsMode" bind:group={statsMode} value="accuracy"
+        >Accuracy</RadioItem
       >
     </RadioGroup>
     <div>

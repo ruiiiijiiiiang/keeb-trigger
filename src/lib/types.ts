@@ -18,7 +18,7 @@ type KeyPress = {
   pressed: boolean;
   pressTime: number;
   totalDuration: number;
-  totalDelay: number;
+  totalGap: number;
   correctCount: number;
   falsePositiveCount: number;
   falseNegativeCount: number;
@@ -28,7 +28,7 @@ type KeyPressMap = Record<string, KeyPress>;
 
 type CharacterStatus = "correct" | "incorrect" | "skipped" | "default";
 
-type StatsMode = "count" | "duration" | "delay";
+type StatsMode = "count" | "duration" | "gap" | "accuracy";
 
 type ColorPalette =
   | "primary"

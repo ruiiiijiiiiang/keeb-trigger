@@ -1,11 +1,7 @@
 <script lang="ts">
   import { getContext } from "svelte";
-  import {
-    Keyboard_Layout,
-    computeSingleBackground,
-    renderSingleStats,
-    KEYTYPE_COLOR_MAP,
-  } from "./utils";
+  import { computeSingleBackground, renderSingleStats } from "./utils";
+  import { KEYBOARD_LAYOUT, KEYTYPE_COLOR_MAP } from "./const";
   import type { KeyPressMap, StatsMode } from "./types";
   import KeyCap from "./KeyCap.svelte";
 
@@ -17,7 +13,7 @@
 </script>
 
 <div class="flex flex-col">
-  {#each Keyboard_Layout.rows as keys}
+  {#each KEYBOARD_LAYOUT.rows as keys}
     <div class="flex">
       {#each keys as key}
         {@const keyPress = keyPresses[key.name]}

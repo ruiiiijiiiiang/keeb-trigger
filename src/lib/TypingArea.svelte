@@ -30,7 +30,7 @@
     getContext<() => string[]>("typedWords");
   const typedWords: string[] = $derived(getTypedWords());
 
-  let cursorSpan: HTMLSpanElement;
+  let cursorSpan: HTMLSpanElement = $state(null);
   $effect(() => {
     typedWords;
     sampleWords;

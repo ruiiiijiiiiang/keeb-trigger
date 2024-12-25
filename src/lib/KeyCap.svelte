@@ -90,9 +90,10 @@
     </div>
   </div>
   <div
-    class="card p-4 variant-glass-secondary w-60"
+    class="card p-4 variant-filled-secondary w-60"
     data-popup="statPopup-{topText}"
   >
+    <div class="arrow variant-filled-secondary" />
     <ul class="list">
       {@render statLi(
         "Count",
@@ -107,17 +108,23 @@
           : renderGroupedStats(groupedKeyPresses, "duration"),
       )}
       {@render statLi(
-        "Average Delay",
+        "Average gap",
         mode === "single"
-          ? renderSingleStats(keyPress, "delay")
-          : renderGroupedStats(groupedKeyPresses, "delay"),
+          ? renderSingleStats(keyPress, "gap")
+          : renderGroupedStats(groupedKeyPresses, "gap"),
       )}
-      <!-- {@render statLi( -->
-      <!--   "Correct Presses", -->
-      <!--   mode === "single" -->
-      <!--     ? renderStats(keyPresses[name], "delay") -->
-      <!--     : renderAverageStats(keyPresses, "delay", groupType, group), -->
-      <!-- )} -->
+      {@render statLi(
+        "Accuracy",
+        mode === "single"
+          ? renderSingleStats(keyPress, "accuracy")
+          : renderGroupedStats(groupedKeyPresses, "accuracy"),
+      )}
     </ul>
   </div>
 </div>
+
+<style>
+  [data-popup] {
+    transition-duration: 0s;
+  }
+</style>

@@ -1,7 +1,8 @@
 <script lang="ts">
   import { getContext } from "svelte";
   import type { KeyPress, KeyPressMap, StatsMode, Key } from "./types";
-  import { renderGroupedStats, computeGroupedBackground, Keys } from "./utils";
+  import { renderGroupedStats, computeGroupedBackground } from "./utils";
+  import { KEYS } from "./const";
   import KeyCap from "./KeyCap.svelte";
 
   const getKeyPresses: () => KeyPressMap =
@@ -16,7 +17,7 @@
 
 <div class="variant-ringed-primary flex flex-col">
   {#each rows as row}
-    {@const keyGroup: Key[] = Keys.filter((key: Key) => key.row === row)}
+    {@const keyGroup: Key[] = KEYS.filter((key: Key) => key.row === row)}
     {@const groupedKeyPresses: KeyPress[] = keyGroup.map((key) => keyPresses[key.name])}
     <KeyCap
       mode={"grouped"}
