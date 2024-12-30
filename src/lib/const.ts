@@ -555,6 +555,35 @@ const KEYTYPE_COLOR_MAP: Record<KeyType, ColorPalette> = {
   mod: "tertiary",
 };
 
+const SYMBOLS: string[] = [
+  "!",
+  "@",
+  "#",
+  "$",
+  "%",
+  "^",
+  "&",
+  "*",
+  "(",
+  ")",
+  "_",
+  "+",
+  "[",
+  "]",
+  "{",
+  "}",
+  "|",
+  ";",
+  ":",
+  '"',
+  "<",
+  ">",
+  ",",
+  ".",
+  "?",
+  "~",
+];
+
 export {
   ACCURACY_THRESHOLD_MAP,
   DURATION_THRESHOLD_MAP,
@@ -563,4 +592,5 @@ export {
   KEYS,
   KEYTYPE_COLOR_MAP,
   SCALED_COLOR_MAP,
+  SYMBOLS,
 };

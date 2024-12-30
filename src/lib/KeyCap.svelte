@@ -93,7 +93,7 @@
     class="card p-4 variant-filled-secondary w-60"
     data-popup="statPopup-{topText}"
   >
-    <div class="arrow variant-filled-secondary" />
+    <div class="arrow variant-filled-secondary"></div>
     <ul class="list">
       {@render statLi(
         "Count",

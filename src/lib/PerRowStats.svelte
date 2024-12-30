@@ -1,16 +1,16 @@
 <script lang="ts">
-  import { getContext } from "svelte";
   import type { KeyPress, KeyPressMap, StatsMode, Key } from "./types";
   import { renderGroupedStats, computeGroupedBackground } from "./utils";
   import { KEYS } from "./const";
   import KeyCap from "./KeyCap.svelte";
 
-  const getKeyPresses: () => KeyPressMap =
-    getContext<() => KeyPressMap>("keyPresses");
-  const keyPresses: KeyPressMap = $derived(getKeyPresses());
-  const getStatsMode: () => StatsMode =
-    getContext<() => StatsMode>("statsMode");
-  const statsMode: StatsMode = $derived(getStatsMode());
+  const {
+    keyPresses,
+    statsMode,
+  }: {
+    keyPresses: KeyPressMap;
+    statsMode: StatsMode;
+  } = $props();
 
   const rows = [1, 2, 3, 4, 5];
 </script>

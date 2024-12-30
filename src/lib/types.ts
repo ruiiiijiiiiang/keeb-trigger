@@ -30,6 +30,8 @@ type CharacterStatus = "correct" | "incorrect" | "skipped" | "default";
 
 type StatsMode = "count" | "duration" | "gap" | "accuracy";
 
+type ExtraChar = "upper" | "number" | "symbol";
+
 type ColorPalette =
   | "primary"
   | "secondary"
@@ -41,6 +43,7 @@ type ColorPalette =
 export type {
   CharacterStatus,
   ColorPalette,
+  ExtraChar,
   Key,
   KeyboardLayout,
   KeyPress,

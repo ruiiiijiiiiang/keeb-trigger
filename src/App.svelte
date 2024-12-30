@@ -1,24 +1,24 @@
 <script lang="ts">
-  import { setContext, tick } from "svelte";
-  import { RadioGroup, RadioItem } from "@skeletonlabs/skeleton";
-  import { ArrowClockwise } from "phosphor-svelte";
   import { generate } from "random-words";
   import type {
     Key,
+    KeyPress,
     KeyPressMap,
     StatsMode,
     CharacterStatus,
+    ExtraChar,
   } from "./lib/types";
-  import { KEYS } from "./lib/const";
+  import { KEYS, SYMBOLS } from "./lib/const";
+  import TypingArea from "./lib/TypingArea.svelte";
   import Keyboard from "./lib/Keyboard.svelte";
   import PerFingerStats from "./lib/PerFingerStats.svelte";
   import PerRowStats from "./lib/PerRowStats.svelte";
-  import TypingArea from "./lib/TypingArea.svelte";
+  import Control from "./lib/Control.svelte";
 
-  const SAMPLE_WORD_LENGTH: number = 30;
+  const SAMPLE_WORD_LENGTH: number = 50;
 
   const initialKeyPress = () => {
-    const keyPresses = {};
+    const keyPresses: KeyPressMap = {};
     KEYS.forEach((key: Key) => {
       keyPresses[key.name] = {
         count: 0,
@@ -35,7 +35,6 @@
   };
 
   let keyPresses: KeyPressMap = $state<KeyPressMap>(initialKeyPress());
-  setContext<() => KeyPressMap>("keyPresses", () => keyPresses);
   let inputText: string = $state<string>("");
   let firstPressTime: number = $state<number>(undefined);
   let lastPressTime: number = $state<number>(undefined);
@@ -44,18 +43,54 @@
   let pausedAt: number = $state<number>(undefined);
   let timeStampedAt: number = $state<number>(undefined);
 
-  let sampleWords: string[] = $state<string[]>(
-    generate(SAMPLE_WORD_LENGTH) as string[],
-  );
-  setContext<() => string[]>("sampleWords", () => sampleWords);
+  let sampleWords: string[] = $derived.by<string[]>(() => {
+    const generatedWords: string[] = generate(SAMPLE_WORD_LENGTH) as string[];
+    const sampleWords: string[] = [];
+    const enabledChars: ExtraChar[] = Object.keys(extraCharSet).filter(
+      (key) => extraCharSet[key],
+    ) as ExtraChar[];
+    for (let i = 0; i < generatedWords.length; i++) {
+      if (Math.random() > 0.5) {
+        sampleWords.push(generatedWords[i]);
+      } else {
+        const extraChar: ExtraChar =
+          enabledChars[Math.floor(Math.random() * enabledChars.length)];
+        switch (extraChar) {
+          case "upper":
+            sampleWords.push(generatedWords[i].toUpperCase());
+            break;
+          case "number":
+            sampleWords.push(
+              generatedWords[i] + Math.floor(Math.random() * 100),
+            );
+            break;
+          case "symbol":
+            sampleWords.push(
+              generatedWords[i] +
+                SYMBOLS[Math.floor(Math.random() * SYMBOLS.length)],
+            );
+            break;
+        }
+      }
+    }
+    return sampleWords;
+  });
   const typedWords: string[] = $derived<string[]>(inputText.split(" "));
-  setContext<() => string[]>("typedWords", () => typedWords);
+
+  let extraCharSet: Record<ExtraChar, boolean> = $state<
+    Record<ExtraChar, boolean>
+  >({
+    upper: false,
+    number: false,
+    symbol: false,
+  });
 
   let statsMode: StatsMode = $state<StatsMode>("count");
-  setContext<() => StatsMode>("statsMode", () => statsMode);
 
-  $effect(() => {
-    const interval = setInterval(() => {
+  let intervalId: number = $state<number>();
+
+  $effect.root(() => {
+    intervalId = window.setInterval(() => {
       if (!firstPressTime || !lastPressTime) {
         return;
       }
@@ -71,11 +106,17 @@
       }
       timeStampedAt = Date.now();
     }, 1000);
-    return () => clearInterval(interval);
+    return () => clearInterval(intervalId);
   });
 
   const keyDownHandler = (event: KeyboardEvent) => {
     firstPressTime ??= Date.now();
+
+    if (pausedAt) {
+      // timeElapsed += pausedAt - timeStampedAt;
+      pausedAt = undefined;
+      timeStampedAt = Date.now();
+    }
 
     const { code } = event;
     if (keyPresses[code].pressed) {
@@ -110,7 +151,7 @@
       correctCount,
       falsePositiveCount,
       falseNegativeCount,
-    } = keyPresses[code];
+    }: KeyPress = keyPresses[code];
     const nextLetter = sampleWords.join(" ").charAt(cursorPosition);
     if (nextLetter === key) {
       correctCount += 1;
@@ -155,7 +196,7 @@
     if (typedWords.length === 1) {
       return typedWords[0].length;
     }
-    const numWordsFinished = typedWords.length - 1;
+    const numWordsFinished: number = typedWords.length - 1;
     const wordsTyped: string[] = sampleWords.slice(
       0,
       numWordsFinished - sampleWords.length,
@@ -171,7 +212,7 @@
   const characterStatus: CharacterStatus[] = $derived.by<CharacterStatus[]>(
     () => {
       const status: CharacterStatus[] = [];
-      sampleWords.forEach((word, wordIndex) => {
+      sampleWords.forEach((word: string, wordIndex: number) => {
         // Check for words that have not been typed
         if (wordIndex >= typedWords.length) {
           [...word].forEach(() => {
@@ -201,6 +242,7 @@
   );
 
   const wpm: number = $derived.by<number>(() => {
+    //TODO: Fix this
     return typedWordsCounter / (timeElapsed / 1000 / 60) || 0;
   });
 
@@ -221,12 +263,15 @@
     const sampleText = sampleWords.join(" ");
     const remainingText = sampleText.slice(cursorPosition);
     const addedSampleWords = generate(SAMPLE_WORD_LENGTH);
-    sampleWords = [...remainingText.split(" "), ...addedSampleWords];
+    // sampleWords = [...remainingText.split(" "), ...addedSampleWords].slice(
+    //   0,
+    //   SAMPLE_WORD_LENGTH,
+    // );
     inputText = "";
   };
 
   const reset = () => {
-    sampleWords = generate(SAMPLE_WORD_LENGTH) as string[];
+    // sampleWords = generate(SAMPLE_WORD_LENGTH) as string[];
     keyPresses = initialKeyPress();
     inputText = "";
     firstPressTime = undefined;
@@ -249,40 +294,20 @@
     {accuracy}
     {lineFeed}
     {pausedAt}
+    {sampleWords}
+    {typedWords}
   />
   <div class="flex gap-6 mx-auto">
     <div class="flex flex-col gap-6">
-      <Keyboard />
+      <Keyboard {keyPresses} {statsMode} />
       <br />
-      <PerFingerStats />
+      <PerFingerStats {keyPresses} {statsMode} />
     </div>
     <div>
-      <PerRowStats />
+      <PerRowStats {keyPresses} {statsMode} />
     </div>
   </div>
   <div class="mx-auto flex gap-6">
-    <RadioGroup
-      active="variant-glass-primary"
-      hover="hover:variant-soft-primary"
-    >
-      <RadioItem name="statsMode" bind:group={statsMode} value="count"
-        >Count</RadioItem
-      >
-      <RadioItem name="statsMode" bind:group={statsMode} value="duration"
-        >Duration</RadioItem
-      >
-      <RadioItem name="statsMode" bind:group={statsMode} value="gap"
-        >Gap</RadioItem
-      >
-      <RadioItem name="statsMode" bind:group={statsMode} value="accuracy"
-        >Accuracy</RadioItem
-      >
-    </RadioGroup>
-    <div>
-      <button class="btn variant-glass-primary" type="button" onclick={reset}>
-        <span><ArrowClockwise weight="duotone" /></span>
-        <span>Reset</span>
-      </button>
-    </div>
+    <Control bind:statsMode bind:extraCharSet {reset} />
   </div>
 </main>

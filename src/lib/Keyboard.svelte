@@ -1,15 +1,16 @@
 <script lang="ts">
-  import { getContext } from "svelte";
   import { computeSingleBackground, renderSingleStats } from "./utils";
   import { KEYBOARD_LAYOUT, KEYTYPE_COLOR_MAP } from "./const";
   import type { KeyPressMap, StatsMode } from "./types";
   import KeyCap from "./KeyCap.svelte";
 
-  const getKeyPresses: () => KeyPressMap =
-    getContext<() => KeyPressMap>("keyPresses");
-  const keyPresses: KeyPressMap = $derived(getKeyPresses());
-  const getStatsMode = getContext<() => StatsMode>("statsMode");
-  const statsMode: StatsMode = $derived(getStatsMode());
+  const {
+    keyPresses,
+    statsMode,
+  }: {
+    keyPresses: KeyPressMap;
+    statsMode: StatsMode;
+  } = $props();
 </script>
 
 <div class="flex flex-col">

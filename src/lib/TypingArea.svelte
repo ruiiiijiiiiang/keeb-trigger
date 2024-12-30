@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getContext, type Component } from "svelte";
+  import { type Component } from "svelte";
   import { clsx } from "@nick/clsx";
   import { TextAa } from "phosphor-svelte";
   import { Target } from "phosphor-svelte";
@@ -14,6 +14,8 @@
     accuracy,
     lineFeed,
     pausedAt,
+    sampleWords,
+    typedWords,
   }: {
     cursorPosition: number;
     characterStatus: CharacterStatus[];
@@ -22,13 +24,9 @@
     accuracy: number;
     lineFeed: () => void;
     pausedAt: number;
+    sampleWords: string[];
+    typedWords: string[];
   } = $props();
-  const getSampleWords: () => string[] =
-    getContext<() => string[]>("sampleWords");
-  const sampleWords: string[] = $derived(getSampleWords());
-  const getTypedWords: () => string[] =
-    getContext<() => string[]>("typedWords");
-  const typedWords: string[] = $derived(getTypedWords());
 
   let cursorSpan: HTMLSpanElement = $state(null);
   $effect(() => {
@@ -90,8 +88,24 @@
     cursor-text
     line-clamp-2
     overflow-hidden
+    relative
   "
   >
+    {#if pausedAt}
+      <div
+        class="
+        absolute
+        inset-0
+        backdrop-blur-md
+        variant-glass-primary
+        flex
+        justify-center
+        items-center
+      "
+      >
+        Paused
+      </div>
+    {/if}
     {#each [...sampleWords.join(" ")] as char, index}
       {#if index === cursorPosition}
         <span
